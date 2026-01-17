@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ServiceDefs.h"
 #include "Locale.h"
 #include "../gamelib/RaceData.h"
 #include "../gamelib/ItemData.h"
