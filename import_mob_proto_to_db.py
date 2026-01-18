@@ -127,6 +127,7 @@ def load_mob_names(filename):
 
     try:
         # Zkusit různá kódování pro české znaky
+        used_encoding = None
         for encoding in ['cp1250', 'utf-8', 'iso-8859-2']:
             try:
                 with open(filename, 'r', encoding=encoding, errors='strict') as f:
@@ -142,10 +143,12 @@ def load_mob_names(filename):
                             try:
                                 vnum = int(parts[0].strip())
                                 name = parts[1].strip()
-                                # Uložit jako bytes v UTF-8 pro databázi
-                                names[vnum] = name.encode('utf-8')
+                                # Uložit ve STEJNÉM kódování jako bylo načteno (zachovat 1 byte/char)
+                                # cp1250: každý znak = 1 byte, vejde se do varbinary(24)
+                                names[vnum] = name.encode(encoding)
                             except ValueError:
                                 continue
+                    used_encoding = encoding
                     print(f"mob_names.txt read with {encoding} encoding")
                     break
             except (UnicodeDecodeError, LookupError):
