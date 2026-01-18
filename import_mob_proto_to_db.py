@@ -444,24 +444,24 @@ def import_mob_proto(mob_proto_file, mob_names_file, db_config):
                     print(f"Warning: Skipping line {line_num} (insufficient columns)")
                     continue
 
-                # Vytvořit INSERT
-                placeholders = ', '.join(['%s'] * len(sql_values))
-                sql = f"INSERT INTO `mob_proto` VALUES ({placeholders})"
-
-                # Převést hodnoty (hex stringy nechat jako string, zbytek jako hodnotu)
+                # Vytvořit INSERT - použít UNHEX() pro binární pole
+                placeholders = []
                 final_values = []
-                for val in sql_values:
-                    if isinstance(val, str) and val.startswith('0x'):
-                        # Hex hodnota - vložit přímo bez escapování
-                        final_values.append(bytes.fromhex(val[2:]))
+
+                for idx, val in enumerate(sql_values):
+                    # Pro pole name (index 1) a locale_name (index 2) použít UNHEX()
+                    if idx in [1, 2] and isinstance(val, str) and val.startswith('0x'):
+                        placeholders.append(f"UNHEX('{val[2:]}')")
                     elif val == 'NULL':
-                        final_values.append(None)
-                    elif isinstance(val, str) and val.startswith("'"):
-                        # Už escapovaný string
-                        final_values.append(val[1:-1])
+                        placeholders.append('NULL')
+                    elif isinstance(val, str) and not val.startswith('0x'):
+                        placeholders.append('%s')
+                        final_values.append(val)
                     else:
+                        placeholders.append('%s')
                         final_values.append(val)
 
+                sql = f"INSERT INTO `mob_proto` VALUES ({', '.join(placeholders)})"
                 cursor.execute(sql, final_values)
                 inserted += 1
 
