@@ -118,7 +118,7 @@ def parse_size(size_string):
 
 
 def load_mob_names(filename):
-    """Načte mob_names.txt a vrátí slovník {vnum: locale_name}"""
+    """Načte mob_names.txt a vrátí slovník {vnum: locale_name_bytes}"""
     names = {}
 
     if not os.path.exists(filename):
@@ -126,32 +126,49 @@ def load_mob_names(filename):
         return names
 
     try:
-        with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
-            for line in f:
-                line = line.strip()
-                # Přeskočit prázdné řádky, komentáře a hlavičku
-                if not line or line.startswith('#') or line.startswith('VNUM'):
-                    continue
+        # Zkusit různá kódování pro české znaky
+        for encoding in ['cp1250', 'utf-8', 'iso-8859-2']:
+            try:
+                with open(filename, 'r', encoding=encoding, errors='strict') as f:
+                    for line in f:
+                        line = line.strip()
+                        # Přeskočit prázdné řádky, komentáře a hlavičku
+                        if not line or line.startswith('#') or line.startswith('VNUM'):
+                            continue
 
-                # Formát: vnum\tname
-                parts = line.split('\t')
-                if len(parts) >= 2:
-                    try:
-                        vnum = int(parts[0].strip())
-                        name = parts[1].strip()
-                        names[vnum] = name
-                    except ValueError:
-                        continue
+                        # Formát: vnum\tname
+                        parts = line.split('\t')
+                        if len(parts) >= 2:
+                            try:
+                                vnum = int(parts[0].strip())
+                                name = parts[1].strip()
+                                # Uložit jako bytes v UTF-8 pro databázi
+                                names[vnum] = name.encode('utf-8')
+                            except ValueError:
+                                continue
+                    print(f"mob_names.txt read with {encoding} encoding")
+                    break
+            except (UnicodeDecodeError, LookupError):
+                continue
     except Exception as e:
         print(f"Error reading {filename}: {e}")
 
     return names
 
 
-def parse_mob_proto_line(line, mob_names):
-    """Parsuje jednu řádku z mob_proto.txt a vrátí SQL hodnoty"""
-    # Rozdělit podle TABu
-    parts = line.split('\t')
+def parse_mob_proto_line(line_bytes, mob_names):
+    """Parsuje jednu řádku z mob_proto.txt a vrátí SQL hodnoty
+
+    Args:
+        line_bytes: Surové byty řádku
+        mob_names: Slovník {vnum: locale_name_bytes}
+    """
+    # Helper pro dekódování textových polí
+    def decode_field(b):
+        return b.strip().decode('ascii', errors='ignore')
+
+    # Rozdělit podle TABu - pracovat s byty
+    parts = line_bytes.split(b'\t')
 
     if len(parts) < 60:
         return None
@@ -159,194 +176,188 @@ def parse_mob_proto_line(line, mob_names):
     col = 0
 
     # Vnum
-    vnum = int(parts[col].strip())
+    try:
+        vnum = int(decode_field(parts[col]))
+    except (ValueError, UnicodeDecodeError):
+        return None
     col += 1
 
-    # Name (zachovat originální byty pro korejské znaky)
-    name = parts[col].strip()
+    # Name - zachovat jako surové byty (korejské znaky v cp949/euc-kr)
+    name_bytes = parts[col].strip()
     col += 1
 
     # Locale name (z mob_names.txt nebo použít name)
-    locale_name = mob_names.get(vnum, name)
+    locale_name_bytes = mob_names.get(vnum, name_bytes)
 
     # Rank
-    rank = RANK_MAP.get(parts[col].strip().upper(), 0)
+    rank = RANK_MAP.get(decode_field(parts[col]).upper(), 0)
     col += 1
 
     # Type
-    mob_type = TYPE_MAP.get(parts[col].strip().upper(), 0)
+    mob_type = TYPE_MAP.get(decode_field(parts[col]).upper(), 0)
     col += 1
 
     # Battle Type
-    battle_type = BATTLE_TYPE_MAP.get(parts[col].strip().upper(), 0)
+    battle_type = BATTLE_TYPE_MAP.get(decode_field(parts[col]).upper(), 0)
     col += 1
 
     # Level
-    level = int(parts[col].strip() or '1')
+    level = int(decode_field(parts[col]) or '1')
     col += 1
 
     # Size (ENUM)
-    size = parse_size(parts[col].strip())
+    size = parse_size(decode_field(parts[col]))
     col += 1
 
     # AI Flag (SET)
-    ai_flag = parse_flags_to_set(parts[col].strip(), AI_FLAG_MAP, ',')
+    ai_flag = parse_flags_to_set(decode_field(parts[col]), AI_FLAG_MAP, ',')
     col += 1
 
     # Mount capacity (skip)
     col += 1
 
     # Race Flag (SET)
-    race_flag = parse_flags_to_set(parts[col].strip(), RACE_FLAG_MAP, ',')
+    race_flag = parse_flags_to_set(decode_field(parts[col]), RACE_FLAG_MAP, ',')
     col += 1
 
     # Immune Flag (SET)
-    immune_flag = parse_flags_to_set(parts[col].strip(), IMMUNE_FLAG_MAP, ',')
+    immune_flag = parse_flags_to_set(decode_field(parts[col]), IMMUNE_FLAG_MAP, ',')
     col += 1
 
     # Empire
-    empire = int(parts[col].strip() or '0')
+    empire = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Folder
-    folder = parts[col].strip()
+    folder = decode_field(parts[col])
     col += 1
 
     # OnClick
-    on_click = int(parts[col].strip() or '0')
+    on_click = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Stats: ST, DX, HT, IQ
-    st = int(parts[col].strip() or '0')
+    st = int(decode_field(parts[col]) or '0')
     col += 1
-    dx = int(parts[col].strip() or '0')
+    dx = int(decode_field(parts[col]) or '0')
     col += 1
-    ht = int(parts[col].strip() or '0')
+    ht = int(decode_field(parts[col]) or '0')
     col += 1
-    iq = int(parts[col].strip() or '0')
+    iq = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Damage
-    damage_min = int(parts[col].strip() or '0')
+    damage_min = int(decode_field(parts[col]) or '0')
     col += 1
-    damage_max = int(parts[col].strip() or '0')
+    damage_max = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Max HP
-    max_hp = int(parts[col].strip() or '0')
+    max_hp = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Regen
-    regen_cycle = int(parts[col].strip() or '0')
+    regen_cycle = int(decode_field(parts[col]) or '0')
     col += 1
-    regen_percent = int(parts[col].strip() or '0')
+    regen_percent = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Gold
-    gold_min = int(parts[col].strip() or '0')
+    gold_min = int(decode_field(parts[col]) or '0')
     col += 1
-    gold_max = int(parts[col].strip() or '0')
+    gold_max = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Exp
-    exp = int(parts[col].strip() or '0')
+    exp = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Def
-    def_val = int(parts[col].strip() or '0')
+    def_val = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Attack Speed
-    attack_speed = int(parts[col].strip() or '100')
+    attack_speed = int(decode_field(parts[col]) or '100')
     col += 1
 
     # Move Speed
-    move_speed = int(parts[col].strip() or '100')
+    move_speed = int(decode_field(parts[col]) or '100')
     col += 1
 
     # Aggressive
-    aggressive_hp_pct = int(parts[col].strip() or '0')
+    aggressive_hp_pct = int(decode_field(parts[col]) or '0')
     col += 1
-    aggressive_sight = int(parts[col].strip() or '0')
+    aggressive_sight = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Attack Range
-    attack_range = int(parts[col].strip() or '0')
+    attack_range = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Drop Item
-    drop_item = int(parts[col].strip() or '0')
+    drop_item = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Resurrection Vnum
-    resurrection_vnum = int(parts[col].strip() or '0')
+    resurrection_vnum = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Enchants (6)
     enchants = []
     for i in range(6):
-        enchants.append(int(parts[col].strip() or '0'))
+        enchants.append(int(decode_field(parts[col]) or '0'))
         col += 1
 
     # Resists (11)
     resists = []
     for i in range(11):
-        resists.append(int(parts[col].strip() or '0'))
+        resists.append(int(decode_field(parts[col]) or '0'))
         col += 1
 
     # Dam Multiply
-    dam_multiply = float(parts[col].strip() or '1.0') if parts[col].strip() else None
+    dam_multiply = float(decode_field(parts[col]) or '1.0') if parts[col].strip() else None
     col += 1
 
     # Summon
-    summon = int(parts[col].strip() or '0') if parts[col].strip() else None
+    summon = int(decode_field(parts[col]) or '0') if parts[col].strip() else None
     col += 1
 
     # Drain SP
-    drain_sp = int(parts[col].strip() or '0') if parts[col].strip() else None
+    drain_sp = int(decode_field(parts[col]) or '0') if parts[col].strip() else None
     col += 1
 
     # Mob Color (skip)
     col += 1
 
     # Polymorph Item
-    polymorph_item = int(parts[col].strip() or '0')
+    polymorph_item = int(decode_field(parts[col]) or '0')
     col += 1
 
     # Skills (5 pairs of level + vnum = 10 fields)
     skills = []
     for i in range(5):
-        skill_level = int(parts[col].strip() or '0') if col < len(parts) and parts[col].strip() else None
+        skill_level = int(decode_field(parts[col]) or '0') if col < len(parts) and parts[col].strip() else None
         col += 1
-        skill_vnum = int(parts[col].strip() or '0') if col < len(parts) and parts[col].strip() else None
+        skill_vnum = int(decode_field(parts[col]) or '0') if col < len(parts) and parts[col].strip() else None
         col += 1
         skills.append((skill_level, skill_vnum))
 
     # SP Points (5)
-    sp_berserk = int(parts[col].strip() or '0') if col < len(parts) else 0
+    sp_berserk = int(decode_field(parts[col]) or '0') if col < len(parts) else 0
     col += 1
-    sp_stoneskin = int(parts[col].strip() or '0') if col < len(parts) else 0
+    sp_stoneskin = int(decode_field(parts[col]) or '0') if col < len(parts) else 0
     col += 1
-    sp_godspeed = int(parts[col].strip() or '0') if col < len(parts) else 0
+    sp_godspeed = int(decode_field(parts[col]) or '0') if col < len(parts) else 0
     col += 1
-    sp_deathblow = int(parts[col].strip() or '0') if col < len(parts) else 0
+    sp_deathblow = int(decode_field(parts[col]) or '0') if col < len(parts) else 0
     col += 1
-    sp_revive = int(parts[col].strip() or '0') if col < len(parts) else 0
+    sp_revive = int(decode_field(parts[col]) or '0') if col < len(parts) else 0
 
-    # Sestavit SQL INSERT
-    # Pro name - zkusit různá kódování (korejština používá cp949/euc-kr)
-    try:
-        name_bytes = name.encode('cp949')
-    except (UnicodeEncodeError, LookupError):
-        try:
-            name_bytes = name.encode('euc-kr')
-        except (UnicodeEncodeError, LookupError):
-            name_bytes = name.encode('utf-8', errors='ignore')
-
+    # Sestavit SQL INSERT - použít surové byty pro name a locale_name
     sql_values = [
         vnum,
-        f"0x{name_bytes.hex().upper()}",  # name jako hex (cp949/euc-kr pro korejštinu)
-        f"0x{locale_name.encode('utf-8', errors='ignore').hex().upper()}",  # locale_name jako hex
+        f"0x{name_bytes.hex().upper()}",  # name jako hex (zachované originální byty)
+        f"0x{locale_name_bytes.hex().upper()}",  # locale_name jako hex (UTF-8 bytes)
         rank,
         mob_type,
         battle_type,
@@ -410,22 +421,10 @@ def import_mob_proto(mob_proto_file, mob_names_file, db_config):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
 
-        # Načíst mob_proto.txt - zkusit různá kódování (korejština = cp949)
-        lines = None
-        for encoding in ['cp949', 'euc-kr', 'utf-8']:
-            try:
-                with open(mob_proto_file, 'r', encoding=encoding, errors='strict') as f:
-                    lines = f.readlines()
-                    print(f"Successfully read file with {encoding} encoding")
-                    break
-            except (UnicodeDecodeError, LookupError):
-                continue
-
-        if lines is None:
-            # Fallback - použít UTF-8 s ignorováním chyb
-            with open(mob_proto_file, 'r', encoding='utf-8', errors='ignore') as f:
-                lines = f.readlines()
-                print(f"Using UTF-8 encoding with errors ignored")
+        # Načíst mob_proto.txt jako BINÁRNÍ soubor (zachovat originální byty)
+        with open(mob_proto_file, 'rb') as f:
+            lines = f.readlines()
+        print(f"Reading mob_proto.txt as binary (preserving original bytes)")
 
         inserted = 0
         errors = 0
@@ -433,8 +432,8 @@ def import_mob_proto(mob_proto_file, mob_names_file, db_config):
         for line_num, line in enumerate(lines, 1):
             line = line.strip()
 
-            # Přeskočit prázdné řádky, komentáře a hlavičku
-            if not line or line.startswith('#') or line.startswith('VNUM'):
+            # Přeskočit prázdné řádky, komentáře a hlavičku (pracujeme s byty)
+            if not line or line.startswith(b'#') or line.startswith(b'VNUM'):
                 continue
 
             try:
