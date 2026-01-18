@@ -162,7 +162,7 @@ def parse_mob_proto_line(line, mob_names):
     vnum = int(parts[col].strip())
     col += 1
 
-    # Name
+    # Name (zachovat originální byty pro korejské znaky)
     name = parts[col].strip()
     col += 1
 
@@ -334,9 +334,18 @@ def parse_mob_proto_line(line, mob_names):
     sp_revive = int(parts[col].strip() or '0') if col < len(parts) else 0
 
     # Sestavit SQL INSERT
+    # Pro name - zkusit různá kódování (korejština používá cp949/euc-kr)
+    try:
+        name_bytes = name.encode('cp949')
+    except (UnicodeEncodeError, LookupError):
+        try:
+            name_bytes = name.encode('euc-kr')
+        except (UnicodeEncodeError, LookupError):
+            name_bytes = name.encode('utf-8', errors='ignore')
+
     sql_values = [
         vnum,
-        f"0x{name.encode('cp1252', errors='ignore').hex().upper()}",  # name jako hex
+        f"0x{name_bytes.hex().upper()}",  # name jako hex (cp949/euc-kr pro korejštinu)
         f"0x{locale_name.encode('utf-8', errors='ignore').hex().upper()}",  # locale_name jako hex
         rank,
         mob_type,
@@ -401,9 +410,22 @@ def import_mob_proto(mob_proto_file, mob_names_file, db_config):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
 
-        # Načíst mob_proto.txt
-        with open(mob_proto_file, 'r', encoding='utf-8', errors='ignore') as f:
-            lines = f.readlines()
+        # Načíst mob_proto.txt - zkusit různá kódování (korejština = cp949)
+        lines = None
+        for encoding in ['cp949', 'euc-kr', 'utf-8']:
+            try:
+                with open(mob_proto_file, 'r', encoding=encoding, errors='strict') as f:
+                    lines = f.readlines()
+                    print(f"Successfully read file with {encoding} encoding")
+                    break
+            except (UnicodeDecodeError, LookupError):
+                continue
+
+        if lines is None:
+            # Fallback - použít UTF-8 s ignorováním chyb
+            with open(mob_proto_file, 'r', encoding='utf-8', errors='ignore') as f:
+                lines = f.readlines()
+                print(f"Using UTF-8 encoding with errors ignored")
 
         inserted = 0
         errors = 0
