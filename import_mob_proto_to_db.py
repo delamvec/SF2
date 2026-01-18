@@ -129,7 +129,8 @@ def load_mob_names(filename):
         with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
             for line in f:
                 line = line.strip()
-                if not line or line.startswith('#'):
+                # Přeskočit prázdné řádky, komentáře a hlavičku
+                if not line or line.startswith('#') or line.startswith('VNUM'):
                     continue
 
                 # Formát: vnum\tname
@@ -410,8 +411,8 @@ def import_mob_proto(mob_proto_file, mob_names_file, db_config):
         for line_num, line in enumerate(lines, 1):
             line = line.strip()
 
-            # Přeskočit prázdné řádky a komentáře
-            if not line or line.startswith('#'):
+            # Přeskočit prázdné řádky, komentáře a hlavičku
+            if not line or line.startswith('#') or line.startswith('VNUM'):
                 continue
 
             try:
