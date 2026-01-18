@@ -357,10 +357,17 @@ def parse_mob_proto_line(line_bytes, mob_names):
     sp_revive = int(decode_field(parts[col]) or '0') if col < len(parts) else 0
 
     # Sestavit SQL INSERT - použít surové byty pro name a locale_name
+    # Oříznutí na maximální délku (varbinary(24) = max 24 bytů)
+    MAX_NAME_LENGTH = 24
+    if len(name_bytes) > MAX_NAME_LENGTH:
+        name_bytes = name_bytes[:MAX_NAME_LENGTH]
+    if len(locale_name_bytes) > MAX_NAME_LENGTH:
+        locale_name_bytes = locale_name_bytes[:MAX_NAME_LENGTH]
+
     sql_values = [
         vnum,
         f"0x{name_bytes.hex().upper()}",  # name jako hex (zachované originální byty)
-        f"0x{locale_name_bytes.hex().upper()}",  # locale_name jako hex (UTF-8 bytes)
+        f"0x{locale_name_bytes.hex().upper()}",  # locale_name jako hex (cp1250 bytes)
         rank,
         mob_type,
         battle_type,
