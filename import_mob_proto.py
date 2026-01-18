@@ -5,7 +5,7 @@ Import mob_proto.txt and mob_names.txt to MySQL database
 """
 
 import sys
-import MySQLdb
+import pymysql as MySQLdb
 
 # Database configuration
 DB_HOST = "127.0.0.1"
