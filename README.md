@@ -5,10 +5,32 @@ Nástroje pro import a opravu mob_proto databáze pro Metin2 server.
 ## Obsah
 
 - `mob_proto.sql` - SQL soubor s kompletní tabulkou mob_proto ve správném formátu
+- `import_mob_proto_to_db.py` - **NOVÝ** Python skript pro import mob_proto.txt a mob_names.txt přímo do databáze
 - `convert_mob_proto.py` - Python skript pro opravu SQL souborů s textovými hodnotami typu
 - `IMPORT_GUIDE.md` - Detailní průvodce importem
+- `MOB_PROTO_IMPORT.md` - Průvodce pro import z mob_proto.txt souborů
 
 ## Rychlý start
+
+### Import z mob_proto.txt (DOPORUČENO)
+
+Pokud máte **mob_proto.txt** a **mob_names.txt** soubory:
+
+```bash
+# Nainstalovat MySQL connector
+pip3 install mysql-connector-python
+
+# Importovat data
+python3 import_mob_proto_to_db.py mob_proto.txt mob_names.txt --password HESLO
+```
+
+Tento skript:
+- Načte mob_proto.txt ve formátu, který používá server
+- Správně převede textové hodnoty (NPC, PAWN, SMALL, atd.) na formát databáze
+- Použije mob_names.txt pro lokalizované názvy
+- Vloží data přímo do MySQL
+
+**Viz [MOB_PROTO_IMPORT.md](MOB_PROTO_IMPORT.md) pro detaily**
 
 ### Pokud máte správný SQL soubor
 
@@ -18,8 +40,14 @@ mysql -u root -p srv1_common < mob_proto.sql
 
 ### Pokud dostáváte chybu "Incorrect integer value: 'NPC'"
 
-To znamená, že váš SQL soubor obsahuje textové hodnoty typu místo číselných. Opravte to:
+To znamená, že se pokušíte importovat data v textovém formátu.
 
+**Řešení 1: Použít import z mob_proto.txt (DOPORUČENO)**
+```bash
+python3 import_mob_proto_to_db.py mob_proto.txt mob_names.txt --password HESLO
+```
+
+**Řešení 2: Opravit SQL soubor**
 ```bash
 # 1. Opravit soubor
 python3 convert_mob_proto.py vas_soubor.sql opraveny_soubor.sql

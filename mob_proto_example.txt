@@ -1,0 +1,8 @@
+# Ukázkový mob_proto.txt soubor
+# Formát: sloupce oddělené TABulátorem (TAB)
+# Tento soubor obsahuje 3 příklady mobů
+
+# Vnum	Name	Rank	Type	BattleType	Level	Size	AIFlag	MountCapacity	RaceFlag	ImmuneFlag	Empire	Folder	OnClick	ST	DX	HT	IQ	DamMin	DamMax	MaxHP	RegenCycle	RegenPct	GoldMin	GoldMax	Exp	Def	AttSpeed	MovSpeed	AggrHPPct	AggrSight	AttRange	DropItem	ResurrVnum	Ench[6]	Resist[11]	DamMult	Summon	DrainSP	MobColor	PolyItem	Skill[10]	SP[5]
+101	들개	PAWN	MONSTER	MELEE	1	SMALL	AGGR	0	ANIMAL	STUN	0	stray_dog	0	3	6	5	2	20	24	126	6	7	18	27	15	4	100	100	0	2000	175	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0		70104	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+102	늑대	PAWN	MONSTER	MELEE	3	SMALL		0	ANIMAL		0	wolf	0	4	9	7	2	23	28	162	6	7	23	34	39	6	100	100	25	2000	175	30028	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0		70104	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+107	회색 두목늑대	S_PAWN	MONSTER	MELEE	16	SMALL		0	ANIMAL		0	wolf	0	23	24	12	6	45	55	614	6	12	80	120	234	20	80	130	25	2000	175	0	0	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1.4	0	0		70105	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0

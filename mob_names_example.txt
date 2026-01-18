@@ -1,0 +1,16 @@
+# Ukázkový mob_names.txt soubor
+# Formát: vnum<TAB>Lokalizovaný název
+# Použijte TAB mezi vnum a názvem
+
+101	Divoký pes
+102	Vlk
+103	Alfa vlk
+104	Modrý vlk
+105	Alfa modrý vlk
+106	Šedý vlk
+107	Alfa šedý vlk
+108	Divoký kanec
+109	Červený divoký kanec
+110	Medvěd
+111	Grizzly medvěd
+112	Černý medvěd
