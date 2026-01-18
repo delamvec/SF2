@@ -6,13 +6,47 @@ Nástroje pro import a opravu mob_proto databáze pro Metin2 server.
 
 - `mob_proto.sql` - SQL soubor s kompletní tabulkou mob_proto ve správném formátu
 - `import_mob_proto_to_db.py` - **NOVÝ** Python skript pro import mob_proto.txt a mob_names.txt přímo do databáze
+- `install_on_server.sh` - **NOVÝ** Automatický instalační a importní skript pro server
 - `convert_mob_proto.py` - Python skript pro opravu SQL souborů s textovými hodnotami typu
 - `IMPORT_GUIDE.md` - Detailní průvodce importem
 - `MOB_PROTO_IMPORT.md` - Průvodce pro import z mob_proto.txt souborů
+- `SERVER_INSTALL.md` - Průvodce pro instalaci a spuštění přímo na serveru
+- `QUICK_START.md` - Rychlý start pro lokální použití
 
 ## Rychlý start
 
-### Import z mob_proto.txt (DOPORUČENO)
+### Spuštění přímo na serveru (NEJJEDNODUŠŠÍ)
+
+Pokud chcete spustit import **přímo na vašem serveru**:
+
+```bash
+# Na serveru - automatická instalace a import
+wget https://raw.githubusercontent.com/delamvec/SF2/claude/fix-mob-proto-import-hupq7/install_on_server.sh
+bash install_on_server.sh
+```
+
+Nebo manuálně:
+
+```bash
+# 1. Stáhnout skript
+wget https://raw.githubusercontent.com/delamvec/SF2/claude/fix-mob-proto-import-hupq7/import_mob_proto_to_db.py
+
+# 2. Nainstalovat prerekvizity
+pip3 install mysql-connector-python
+
+# 3. Spustit import (upravte cesty)
+python3 import_mob_proto_to_db.py \
+    /home/serverfiles/main/srv1/share/conf/mob_proto.txt \
+    /home/serverfiles/main/srv1/share/conf/mob_names.txt \
+    --host localhost \
+    --user root \
+    --password VASE_HESLO \
+    --database srv1_common
+```
+
+**Viz [SERVER_INSTALL.md](SERVER_INSTALL.md) pro detailní instrukce**
+
+### Import z mob_proto.txt (lokálně)
 
 Pokud máte **mob_proto.txt** a **mob_names.txt** soubory:
 
