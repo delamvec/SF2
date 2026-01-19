@@ -1,0 +1,136 @@
+﻿  Mysql2Proto.cpp
+  lzo.cpp
+  tea.cpp
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Tools\Mysql2Proto\Mysql2Proto\tea.cpp(11,2): warning C5033: register už není podporovanou třídou úložiště.
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Tools\Mysql2Proto\Mysql2Proto\tea.cpp(28,2): warning C5033: register už není podporovanou třídou úložiště.
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Client\eterBase\filename.h(187,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Client\eterBase\filename.h(350,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996: 'std::iterator<std::random_access_iterator_tag,internal::MaybeAddConst<Const,rapidjson::GenericMember<Encoding,Allocator>>::Type,ptrdiff_t,internal::MaybeAddConst<Const,rapidjson::GenericMember<Encoding,Allocator>>::Type*,internal::MaybeAddConst<Const,rapidjson::GenericMember<Encoding,Allocator>>::Type&>': warning STL4015: The std::iterator class template (used as a base class to provide typedefs) is deprecated in C++17. (The <iterator> header is NOT deprecated.) The C++ Standard has never required user-defined iterators to derive from std::iterator. To fix this warning, stop deriving from std::iterator and start providing publicly accessible typedefs named iterator_category, value_type, difference_type, pointer, and reference. Note that value_type is required to be non-const, even for constant iterators. You can define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning.
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xutility(7526,45):
+      viz deklarace: std::iterator
+      X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5):
+      kontext vytváření instancí šablony (první nejstarší) je
+          X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(104,7):
+          při kompilaci šablony třídy rapidjson::GenericMemberIterator
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Tools\Mysql2Proto\Mysql2Proto\Mysql2Proto.cpp(540,98): warning C4474: printf: Pro formátovací řetězec se předal příliš velký počet argumentů.
+      X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Tools\Mysql2Proto\Mysql2Proto\Mysql2Proto.cpp(540,98):
+      Pro zástupný text a jeho parametry se očekával tento počet variadických argumentů: 1, ale je zadaný tento počet: 2.
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19): warning C4996: 'std::iterator<std::random_access_iterator_tag,rapidjson::GenericMember<Encoding,Allocator>,ptrdiff_t,rapidjson::GenericMember<Encoding,Allocator> *,rapidjson::GenericMember<Encoding,Allocator> &>': warning STL4015: The std::iterator class template (used as a base class to provide typedefs) is deprecated in C++17. (The <iterator> header is NOT deprecated.) The C++ Standard has never required user-defined iterators to derive from std::iterator. To fix this warning, stop deriving from std::iterator and start providing publicly accessible typedefs named iterator_category, value_type, difference_type, pointer, and reference. Note that value_type is required to be non-const, even for constant iterators. You can define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning.
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19): warning C4996:         with
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19): warning C4996:         [
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19): warning C4996:             Encoding=rapidjson::UTF8<char>,
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19): warning C4996:             Allocator=rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19): warning C4996:         ]
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xutility(7526,45):
+      viz deklarace: std::iterator
+      X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19):
+      kontext vytváření instancí šablony (první nejstarší) je
+          X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Tools\Mysql2Proto\Mysql2Proto\Mysql2Proto.cpp(706,22):
+          Zobrazit odkaz na kompilované vytváření instancí funkce třída šablona rapidjson::GenericDocument<rapidjson::UTF8<char>,rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>,rapidjson::CrtAllocator>
+          X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(2031,32):
+          Zobrazit odkaz na kompilované vytváření instancí funkce třída šablona rapidjson::GenericValue<rapidjson::UTF8<char>,rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>>
+          X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(555,71):
+          Zobrazit odkaz na kompilované vytváření instancí funkce třída šablona rapidjson::GenericMemberIterator<false,Encoding,Allocator>
+          with
+          [
+              Encoding=rapidjson::UTF8<char>,
+              Allocator=rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>
+          ]
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996: 'std::iterator<std::random_access_iterator_tag,rapidjson::GenericMember<Encoding,Allocator>,ptrdiff_t,rapidjson::GenericMember<Encoding,Allocator> *,rapidjson::GenericMember<Encoding,Allocator> &>': warning STL4015: The std::iterator class template (used as a base class to provide typedefs) is deprecated in C++17. (The <iterator> header is NOT deprecated.) The C++ Standard has never required user-defined iterators to derive from std::iterator. To fix this warning, stop deriving from std::iterator and start providing publicly accessible typedefs named iterator_category, value_type, difference_type, pointer, and reference. Note that value_type is required to be non-const, even for constant iterators. You can define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning.
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996:         with
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996:         [
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996:             Encoding=rapidjson::UTF8<char>,
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996:             Allocator=rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996:         ]
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xutility(7526,45):
+      viz deklarace: std::iterator
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(124,5): warning C4996: 'std::iterator<std::random_access_iterator_tag,rapidjson::GenericMember<Encoding,Allocator>,ptrdiff_t,rapidjson::GenericMember<Encoding,Allocator> *,rapidjson::GenericMember<Encoding,Allocator> &>::pointer': warning STL4015: The std::iterator class template (used as a base class to provide typedefs) is deprecated in C++17. (The <iterator> header is NOT deprecated.) The C++ Standard has never required user-defined iterators to derive from std::iterator. To fix this warning, stop deriving from std::iterator and start providing publicly accessible typedefs named iterator_category, value_type, difference_type, pointer, and reference. Note that value_type is required to be non-const, even for constant iterators. You can define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning.
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(124,5): warning C4996:         with
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(124,5): warning C4996:         [
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(124,5): warning C4996:             Encoding=rapidjson::UTF8<char>,
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(124,5): warning C4996:             Allocator=rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(124,5): warning C4996:         ]
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(126,5): warning C4996: 'std::iterator<std::random_access_iterator_tag,rapidjson::GenericMember<Encoding,Allocator>,ptrdiff_t,rapidjson::GenericMember<Encoding,Allocator> *,rapidjson::GenericMember<Encoding,Allocator> &>::reference': warning STL4015: The std::iterator class template (used as a base class to provide typedefs) is deprecated in C++17. (The <iterator> header is NOT deprecated.) The C++ Standard has never required user-defined iterators to derive from std::iterator. To fix this warning, stop deriving from std::iterator and start providing publicly accessible typedefs named iterator_category, value_type, difference_type, pointer, and reference. Note that value_type is required to be non-const, even for constant iterators. You can define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning.
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(126,5): warning C4996:         with
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(126,5): warning C4996:         [
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(126,5): warning C4996:             Encoding=rapidjson::UTF8<char>,
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(126,5): warning C4996:             Allocator=rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(126,5): warning C4996:         ]
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(128,5): warning C4996: 'std::iterator<std::random_access_iterator_tag,rapidjson::GenericMember<Encoding,Allocator>,ptrdiff_t,rapidjson::GenericMember<Encoding,Allocator> *,rapidjson::GenericMember<Encoding,Allocator> &>::difference_type': warning STL4015: The std::iterator class template (used as a base class to provide typedefs) is deprecated in C++17. (The <iterator> header is NOT deprecated.) The C++ Standard has never required user-defined iterators to derive from std::iterator. To fix this warning, stop deriving from std::iterator and start providing publicly accessible typedefs named iterator_category, value_type, difference_type, pointer, and reference. Note that value_type is required to be non-const, even for constant iterators. You can define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning.
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(128,5): warning C4996:         with
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(128,5): warning C4996:         [
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(128,5): warning C4996:             Encoding=rapidjson::UTF8<char>,
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(128,5): warning C4996:             Allocator=rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(128,5): warning C4996:         ]
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19): warning C4996: 'std::iterator<std::random_access_iterator_tag,const rapidjson::GenericMember<Encoding,Allocator>,ptrdiff_t,const rapidjson::GenericMember<Encoding,Allocator> *,const rapidjson::GenericMember<Encoding,Allocator> &>': warning STL4015: The std::iterator class template (used as a base class to provide typedefs) is deprecated in C++17. (The <iterator> header is NOT deprecated.) The C++ Standard has never required user-defined iterators to derive from std::iterator. To fix this warning, stop deriving from std::iterator and start providing publicly accessible typedefs named iterator_category, value_type, difference_type, pointer, and reference. Note that value_type is required to be non-const, even for constant iterators. You can define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning.
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19): warning C4996:         with
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19): warning C4996:         [
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19): warning C4996:             Encoding=rapidjson::UTF8<char>,
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19): warning C4996:             Allocator=rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19): warning C4996:         ]
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xutility(7526,45):
+      viz deklarace: std::iterator
+      X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(105,19):
+      kontext vytváření instancí šablony (první nejstarší) je
+          X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(556,70):
+          Zobrazit odkaz na kompilované vytváření instancí funkce třída šablona rapidjson::GenericMemberIterator<true,Encoding,Allocator>
+          with
+          [
+              Encoding=rapidjson::UTF8<char>,
+              Allocator=rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>
+          ]
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996: 'std::iterator<std::random_access_iterator_tag,const rapidjson::GenericMember<Encoding,Allocator>,ptrdiff_t,const rapidjson::GenericMember<Encoding,Allocator> *,const rapidjson::GenericMember<Encoding,Allocator> &>': warning STL4015: The std::iterator class template (used as a base class to provide typedefs) is deprecated in C++17. (The <iterator> header is NOT deprecated.) The C++ Standard has never required user-defined iterators to derive from std::iterator. To fix this warning, stop deriving from std::iterator and start providing publicly accessible typedefs named iterator_category, value_type, difference_type, pointer, and reference. Note that value_type is required to be non-const, even for constant iterators. You can define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning.
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996:         with
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996:         [
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996:             Encoding=rapidjson::UTF8<char>,
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996:             Allocator=rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(113,5): warning C4996:         ]
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xutility(7526,45):
+      viz deklarace: std::iterator
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(124,5): warning C4996: 'std::iterator<std::random_access_iterator_tag,const rapidjson::GenericMember<Encoding,Allocator>,ptrdiff_t,const rapidjson::GenericMember<Encoding,Allocator> *,const rapidjson::GenericMember<Encoding,Allocator> &>::pointer': warning STL4015: The std::iterator class template (used as a base class to provide typedefs) is deprecated in C++17. (The <iterator> header is NOT deprecated.) The C++ Standard has never required user-defined iterators to derive from std::iterator. To fix this warning, stop deriving from std::iterator and start providing publicly accessible typedefs named iterator_category, value_type, difference_type, pointer, and reference. Note that value_type is required to be non-const, even for constant iterators. You can define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning.
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(124,5): warning C4996:         with
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(124,5): warning C4996:         [
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(124,5): warning C4996:             Encoding=rapidjson::UTF8<char>,
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(124,5): warning C4996:             Allocator=rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(124,5): warning C4996:         ]
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(126,5): warning C4996: 'std::iterator<std::random_access_iterator_tag,const rapidjson::GenericMember<Encoding,Allocator>,ptrdiff_t,const rapidjson::GenericMember<Encoding,Allocator> *,const rapidjson::GenericMember<Encoding,Allocator> &>::reference': warning STL4015: The std::iterator class template (used as a base class to provide typedefs) is deprecated in C++17. (The <iterator> header is NOT deprecated.) The C++ Standard has never required user-defined iterators to derive from std::iterator. To fix this warning, stop deriving from std::iterator and start providing publicly accessible typedefs named iterator_category, value_type, difference_type, pointer, and reference. Note that value_type is required to be non-const, even for constant iterators. You can define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning.
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(126,5): warning C4996:         with
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(126,5): warning C4996:         [
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(126,5): warning C4996:             Encoding=rapidjson::UTF8<char>,
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(126,5): warning C4996:             Allocator=rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(126,5): warning C4996:         ]
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+  
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(128,5): warning C4996: 'std::iterator<std::random_access_iterator_tag,const rapidjson::GenericMember<Encoding,Allocator>,ptrdiff_t,const rapidjson::GenericMember<Encoding,Allocator> *,const rapidjson::GenericMember<Encoding,Allocator> &>::difference_type': warning STL4015: The std::iterator class template (used as a base class to provide typedefs) is deprecated in C++17. (The <iterator> header is NOT deprecated.) The C++ Standard has never required user-defined iterators to derive from std::iterator. To fix this warning, stop deriving from std::iterator and start providing publicly accessible typedefs named iterator_category, value_type, difference_type, pointer, and reference. Note that value_type is required to be non-const, even for constant iterators. You can define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning.
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(128,5): warning C4996:         with
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(128,5): warning C4996:         [
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(128,5): warning C4996:             Encoding=rapidjson::UTF8<char>,
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(128,5): warning C4996:             Allocator=rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>
+X:\A\MT\nejake sf\Martina\Marty-v58\source-client\Srcs\Extern\include\rapidjson\document.h(128,5): warning C4996:         ]
+  (kompilování zdrojového souboru Mysql2Proto.cpp)
+  
+resource.h(17): fatal error RC1004: unexpected end of file found
+  

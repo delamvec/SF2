@@ -1,0 +1,7 @@
+{
+	"hostname":	"10.0.0.1",
+	"user":		"mt2",
+	"password":	"TyPicoToJeExtrem",
+	"database":	"player",
+	"port":		3306
+}
