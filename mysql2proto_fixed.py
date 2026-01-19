@@ -577,9 +577,11 @@ class Mysql2Proto:
         cursor = self.conn.cursor()
 
         query = """
-            SELECT vnum, name, locale_name, type, rank, battle_type, level, size,
-                   ai_flag, setRaceFlag, setImmuneFlag, on_click, empire, drop_item,
-                   resurrection_vnum, folder, st, dx, ht, iq, damage_min, damage_max, max_hp,
+            SELECT vnum, name, locale_name, type, rank, battle_type, level,
+                   CASE size WHEN 'SMALL' THEN 0 WHEN 'MEDIUM' THEN 1 WHEN 'BIG' THEN 2 ELSE 0 END as size,
+                   ai_flag+0 as ai_flag, setRaceFlag+0 as setRaceFlag, setImmuneFlag+0 as setImmuneFlag,
+                   on_click, empire, drop_item, resurrection_vnum, folder,
+                   st, dx, ht, iq, damage_min, damage_max, max_hp,
                    regen_cycle, regen_percent, exp, gold_min, gold_max, def,
                    attack_speed, move_speed, aggressive_hp_pct, aggressive_sight, attack_range, polymorph_item,
                    enchant_curse, enchant_slow, enchant_poison, enchant_stun, enchant_critical, enchant_penetrate,
