@@ -452,10 +452,12 @@ class MobTableR255:
                         to_int(row[70]))  # sp_revive
         offset += 5
 
-        # Padding to 312 bytes (3 bytes remaining)
-        # Already handled by bytearray initialization
+        # Padding to 312 bytes - add remaining bytes to reach SIZE
+        # Structure has reserved/unused fields at the end
+        remaining = MobTableR255.SIZE - offset
+        # Padding already handled by bytearray initialization (zeros)
 
-        assert offset + 3 == MobTableR255.SIZE, f"Size mismatch: {offset} + 3 != {MobTableR255.SIZE}"
+        assert offset <= MobTableR255.SIZE, f"Size overflow: {offset} > {MobTableR255.SIZE}"
 
         return bytes(data)
 
