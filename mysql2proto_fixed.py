@@ -92,6 +92,18 @@ class TEA:
         return bytes(result)
 
 
+def to_bytes(value, encoding='utf-8'):
+    """Convert string or bytes to bytes"""
+    if isinstance(value, bytes):
+        return value
+    elif isinstance(value, str):
+        return value.encode(encoding)
+    elif value is None:
+        return b''
+    else:
+        return str(value).encode(encoding)
+
+
 class ItemTableR156:
     """TItemTable_r156 structure - 156 bytes - EXACT match from ItemData.h"""
 
@@ -141,12 +153,12 @@ class ItemTableR156:
         offset += 4
 
         # szName (char[25])
-        name = (row[3] or '')[:24].encode('utf-8')
+        name = to_bytes(row[3] or '')[:24]
         data[offset:offset+25] = name.ljust(25, b'\x00')
         offset += 25
 
         # szLocaleName (char[25])
-        locale_name = (row[4] or '')[:24].encode('utf-8')
+        locale_name = to_bytes(row[4] or '')[:24]
         data[offset:offset+25] = locale_name.ljust(25, b'\x00')
         offset += 25
 
@@ -239,12 +251,12 @@ class MobTableR255:
         offset += 4
 
         # szName (char[25])
-        name = (row[1] or '')[:24].encode('utf-8')
+        name = to_bytes(row[1] or '')[:24]
         data[offset:offset+25] = name.ljust(25, b'\x00')
         offset += 25
 
         # szLocaleName (char[25])
-        locale_name = (row[2] or '')[:24].encode('utf-8')
+        locale_name = to_bytes(row[2] or '')[:24]
         data[offset:offset+25] = locale_name.ljust(25, b'\x00')
         offset += 25
 
@@ -275,7 +287,7 @@ class MobTableR255:
         offset += 3
 
         # szFolder (char[64])
-        folder = (row[15] or '')[:63].encode('utf-8')
+        folder = to_bytes(row[15] or '')[:63]
         data[offset:offset+64] = folder.ljust(64, b'\x00')
         offset += 64
 
