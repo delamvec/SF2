@@ -22,9 +22,17 @@ import pymysql
 try:
     import lzo
     HAS_LZO = True
+    LZO_LIBRARY = 'python-lzo'
 except ImportError:
-    print("Warning: python-lzo not installed. Trying without compression...")
-    HAS_LZO = False
+    try:
+        import lzallright as lzo
+        HAS_LZO = True
+        LZO_LIBRARY = 'lzallright'
+        print("Using lzallright for LZO compression (python-lzo alternative)")
+    except ImportError:
+        print("Warning: python-lzo/lzallright not installed. Trying without compression...")
+        HAS_LZO = False
+        LZO_LIBRARY = None
 
 # TEA Encryption Keys
 MOB_PROTO_KEY = [4813894, 18955, 552631, 6822045]
