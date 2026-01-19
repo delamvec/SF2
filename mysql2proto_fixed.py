@@ -220,6 +220,221 @@ class ItemTableR156:
         return bytes(data)
 
 
+class MobTableR255:
+    """TMobTable_r255 structure - 312 bytes - EXACT match from PythonNonPlayer.h"""
+
+    # Structure based on Mysql2Proto.cpp BuildMobTable() implementation
+    # Total size: 312 bytes
+    SIZE = 312
+
+    @staticmethod
+    def pack_from_db_row(row):
+        """Pack MobTable from MySQL row - EXACT binary format"""
+        data = bytearray(MobTableR255.SIZE)
+
+        offset = 0
+
+        # dwVnum (DWORD - 4 bytes)
+        struct.pack_into('<I', data, offset, row[0] or 0)
+        offset += 4
+
+        # szName (char[25])
+        name = (row[1] or '')[:24].encode('utf-8')
+        data[offset:offset+25] = name.ljust(25, b'\x00')
+        offset += 25
+
+        # szLocaleName (char[25])
+        locale_name = (row[2] or '')[:24].encode('utf-8')
+        data[offset:offset+25] = locale_name.ljust(25, b'\x00')
+        offset += 25
+
+        # bRank, bType, bBattleType, bLevel, bSize (5 BYTEs)
+        struct.pack_into('<BBBBB', data, offset,
+                        row[4] or 0,   # rank
+                        row[3] or 0,   # type
+                        row[5] or 0,   # battle_type
+                        row[6] or 0,   # level
+                        row[7] or 0)   # size
+        offset += 5
+
+        # Padding to align (3 bytes)
+        offset += 3
+
+        # dwAIFlag, dwRaceFlag, dwImmuneFlag (3 DWORDs)
+        struct.pack_into('<III', data, offset,
+                        row[8] or 0,   # ai_flag
+                        row[9] or 0,   # setRaceFlag
+                        row[10] or 0)  # setImmuneFlag
+        offset += 12
+
+        # bEmpire (BYTE)
+        struct.pack_into('<B', data, offset, row[12] or 0)
+        offset += 1
+
+        # Padding (3 bytes)
+        offset += 3
+
+        # szFolder (char[64])
+        folder = (row[15] or '')[:63].encode('utf-8')
+        data[offset:offset+64] = folder.ljust(64, b'\x00')
+        offset += 64
+
+        # bOnClickType (BYTE)
+        struct.pack_into('<B', data, offset, row[11] or 0)
+        offset += 1
+
+        # bStr, bDex, bCon, bInt (4 BYTEs)
+        struct.pack_into('<BBBB', data, offset,
+                        row[16] or 0,  # st
+                        row[17] or 0,  # dx
+                        row[18] or 0,  # ht
+                        row[19] or 0)  # iq
+        offset += 4
+
+        # Padding (3 bytes)
+        offset += 3
+
+        # dwDamageRange[2] (2 DWORDs)
+        struct.pack_into('<II', data, offset,
+                        row[20] or 0,  # damage_min
+                        row[21] or 0)  # damage_max
+        offset += 8
+
+        # dwMaxHP (DWORD)
+        struct.pack_into('<I', data, offset, row[22] or 0)
+        offset += 4
+
+        # bRegenCycle, bRegenPercent (2 BYTEs)
+        struct.pack_into('<BB', data, offset,
+                        row[23] or 0,  # regen_cycle
+                        row[24] or 0)  # regen_percent
+        offset += 2
+
+        # Padding (2 bytes)
+        offset += 2
+
+        # dwExp (DWORD)
+        struct.pack_into('<I', data, offset, row[25] or 0)
+        offset += 4
+
+        # dwGoldMin, dwGoldMax (2 DWORDs)
+        struct.pack_into('<II', data, offset,
+                        row[26] or 0,  # gold_min
+                        row[27] or 0)  # gold_max
+        offset += 8
+
+        # wDef (WORD)
+        struct.pack_into('<H', data, offset, row[28] or 0)
+        offset += 2
+
+        # sAttackSpeed, sMovingSpeed (2 shorts)
+        struct.pack_into('<hh', data, offset,
+                        row[29] or 0,  # attack_speed
+                        row[30] or 0)  # move_speed
+        offset += 4
+
+        # bAggresiveHPPct (BYTE)
+        struct.pack_into('<B', data, offset, row[31] or 0)
+        offset += 1
+
+        # Padding (1 byte)
+        offset += 1
+
+        # wAggressiveSight (WORD)
+        struct.pack_into('<H', data, offset, row[32] or 0)
+        offset += 2
+
+        # wAttackRange (WORD)
+        struct.pack_into('<H', data, offset, row[33] or 0)
+        offset += 2
+
+        # Padding (2 bytes)
+        offset += 2
+
+        # dwDropItemVnum (DWORD)
+        struct.pack_into('<I', data, offset, row[13] or 0)
+        offset += 4
+
+        # dwResurrectionVnum (DWORD)
+        struct.pack_into('<I', data, offset, row[14] or 0)
+        offset += 4
+
+        # dwPolymorphItemVnum (DWORD)
+        struct.pack_into('<I', data, offset, row[34] or 0)
+        offset += 4
+
+        # cEnchants[6] (6 signed chars)
+        struct.pack_into('<bbbbbb', data, offset,
+                        row[35] or 0,  # enchant_curse
+                        row[36] or 0,  # enchant_slow
+                        row[37] or 0,  # enchant_poison
+                        row[38] or 0,  # enchant_stun
+                        row[39] or 0,  # enchant_critical
+                        row[40] or 0)  # enchant_penetrate
+        offset += 6
+
+        # Padding (2 bytes)
+        offset += 2
+
+        # cResists[11] (11 signed chars)
+        struct.pack_into('<bbbbbbbbbbb', data, offset,
+                        row[41] or 0,  # resist_sword
+                        row[42] or 0,  # resist_twohand
+                        row[43] or 0,  # resist_dagger
+                        row[44] or 0,  # resist_bell
+                        row[45] or 0,  # resist_fan
+                        row[46] or 0,  # resist_bow
+                        row[47] or 0,  # resist_fire
+                        row[48] or 0,  # resist_elect
+                        row[49] or 0,  # resist_magic
+                        row[50] or 0,  # resist_wind
+                        row[51] or 0)  # resist_poison
+        offset += 11
+
+        # Padding (1 byte)
+        offset += 1
+
+        # fDamMultiply (float - 4 bytes)
+        struct.pack_into('<f', data, offset, float(row[52] or 0.0))
+        offset += 4
+
+        # dwSummonVnum (DWORD)
+        struct.pack_into('<I', data, offset, row[53] or 0)
+        offset += 4
+
+        # dwDrainSP (DWORD)
+        struct.pack_into('<I', data, offset, row[54] or 0)
+        offset += 4
+
+        # dwMonsterColor (DWORD)
+        struct.pack_into('<I', data, offset, row[55] or 0)
+        offset += 4
+
+        # Skills[5] - each skill is { DWORD dwVnum; BYTE bLevel; } with padding
+        # Each skill structure is 8 bytes (DWORD + BYTE + 3 padding)
+        for i in range(5):
+            skill_vnum = row[56 + i*2] or 0
+            skill_level = row[57 + i*2] or 0
+            struct.pack_into('<IBxxx', data, offset, skill_vnum, skill_level)
+            offset += 8
+
+        # Special Points (5 BYTEs)
+        struct.pack_into('<BBBBB', data, offset,
+                        row[66] or 0,  # sp_berserk
+                        row[67] or 0,  # sp_stoneskin
+                        row[68] or 0,  # sp_godspeed
+                        row[69] or 0,  # sp_deathblow
+                        row[70] or 0)  # sp_revive
+        offset += 5
+
+        # Padding to 312 bytes (3 bytes remaining)
+        # Already handled by bytearray initialization
+
+        assert offset + 3 == MobTableR255.SIZE, f"Size mismatch: {offset} + 3 != {MobTableR255.SIZE}"
+
+        return bytes(data)
+
+
 class Mysql2Proto:
     def __init__(self, config_file='Mysql2Proto.json'):
         self.config = self.load_config(config_file)
@@ -329,9 +544,75 @@ class Mysql2Proto:
 
     def pack_mob_proto(self):
         """Export mob_proto from MySQL to binary file"""
-        print("mob_proto packing not yet implemented (need TMobTable structure)")
-        print("Please provide PythonNonPlayer.h file")
-        return False
+        if not self.connect_db():
+            return False
+
+        cursor = self.conn.cursor()
+
+        query = """
+            SELECT vnum, name, locale_name, type, rank, battle_type, level, size,
+                   ai_flag, setRaceFlag, setImmuneFlag, on_click, empire, drop_item,
+                   resurrection_vnum, folder, st, dx, ht, iq, damage_min, damage_max, max_hp,
+                   regen_cycle, regen_percent, exp, gold_min, gold_max, def,
+                   attack_speed, move_speed, aggressive_hp_pct, aggressive_sight, attack_range, polymorph_item,
+                   enchant_curse, enchant_slow, enchant_poison, enchant_stun, enchant_critical, enchant_penetrate,
+                   resist_sword, resist_twohand, resist_dagger, resist_bell, resist_fan, resist_bow,
+                   resist_fire, resist_elect, resist_magic, resist_wind, resist_poison, dam_multiply, summon, drain_sp,
+                   mob_color,
+                   skill_vnum0, skill_level0, skill_vnum1, skill_level1, skill_vnum2, skill_level2,
+                   skill_vnum3, skill_level3, skill_vnum4, skill_level4,
+                   sp_berserk, sp_stoneskin, sp_godspeed, sp_deathblow, sp_revive
+            FROM mob_proto ORDER BY vnum
+        """
+
+        print(f"sizeof(CPythonNonPlayer::TMobTable): {MobTableR255.SIZE}")
+        print("Loading mob_proto from MySQL")
+
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        print(f"Complete! {len(rows)} Mobs loaded.")
+
+        # Build binary data
+        data = bytearray()
+        for row in rows:
+            data.extend(MobTableR255.pack_from_db_row(row))
+
+        print(f"lzo.real_alloc  {hex(id(data))}({len(data)})")
+
+        # Compress with LZO
+        if HAS_LZO:
+            try:
+                compressed = lzo.compress(bytes(data), 1)  # level 1 = lzo1x_1
+                print(f"{len(data)} --Compress--> {len(compressed)} bytes")
+            except Exception as e:
+                print(f"Warning: LZO compression failed: {e}, using uncompressed data")
+                compressed = bytes(data)
+        else:
+            print("Warning: LZO not available, using uncompressed data")
+            compressed = bytes(data)
+
+        # Encrypt with TEA
+        # Prepend 4-byte size header before encryption
+        size_header = struct.pack('<I', len(compressed))
+        to_encrypt = size_header + compressed
+
+        encrypted = TEA.encrypt(to_encrypt, MOB_PROTO_KEY)
+        print(f"{len(compressed)} --Encrypt--> {len(encrypted)} bytes")
+
+        # Write to file
+        with open('mob_proto', 'wb') as f:
+            f.write(struct.pack('<I', FOURCC_MMPT))           # fourcc 'MMPT'
+            f.write(struct.pack('<I', len(rows)))             # element count
+            f.write(struct.pack('<I', len(encrypted)))        # data size
+            f.write(encrypted)
+
+        print("mob_proto created successfully!")
+        print(f"File size: {os.path.getsize('mob_proto')} bytes")
+
+        cursor.close()
+        self.conn.close()
+        return True
 
     def run(self, args):
         """Main execution"""
