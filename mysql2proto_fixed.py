@@ -548,29 +548,36 @@ class Mysql2Proto:
             print("Warning: LZO not available, using uncompressed data")
             compressed = bytes(data)
 
-        # Encrypt with TEA
-        # Prepend 4-byte size header before encryption
-        size_header = struct.pack('<I', len(compressed))
-        to_encrypt = size_header + compressed
+        # Build data to encrypt: MCOZ fourcc + size + compressed data
+        # After decryption, first 4 bytes MUST be 'MCOZ' (client checks this)
+        to_encrypt = struct.pack('<I', FOURCC_MCOZ) + struct.pack('<I', len(compressed)) + compressed
 
-        encrypted = TEA.encrypt(to_encrypt, ITEM_PROTO_KEY)
-        print(f"{len(compressed)} --Encrypt--> {len(encrypted)} bytes")
+        # Pad to 8-byte boundary for TEA encryption
+        if len(to_encrypt) % 8:
+            padded_size = (len(to_encrypt) // 8 + 1) * 8
+        else:
+            padded_size = len(to_encrypt)
+        to_encrypt_padded = to_encrypt + b'\x00' * (padded_size - len(to_encrypt))
 
-        # Build MCOZ header (LZO compression header)
+        # Encrypt padded data
+        encrypted = TEA.encrypt(to_encrypt_padded, ITEM_PROTO_KEY)
+        print(f"{len(data)} --Compress--> {len(compressed)} --Encrypt--> {len(encrypted)} bytes")
+
+        # Build MCOZ header (NOT encrypted) - this goes BEFORE encrypted data
         mcoz_header = bytearray(16)
         struct.pack_into('<I', mcoz_header, 0, FOURCC_MCOZ)          # fourcc 'MCOZ'
-        struct.pack_into('<I', mcoz_header, 4, len(encrypted))       # dwEncryptSize
+        struct.pack_into('<I', mcoz_header, 4, padded_size)          # dwEncryptSize (padded size)
         struct.pack_into('<I', mcoz_header, 8, len(compressed))      # dwCompressedSize
         struct.pack_into('<I', mcoz_header, 12, len(data))           # dwRealSize
 
-        # Build complete data: MCOZ header + size + encrypted data
-        complete_data = bytes(mcoz_header) + struct.pack('<I', len(encrypted)) + encrypted
+        # Build complete data: MCOZ header + encrypted data
+        complete_data = bytes(mcoz_header) + encrypted
 
         # Write to file
         with open('item_proto', 'wb') as f:
             f.write(struct.pack('<I', FOURCC_MIPT))           # fourcc 'MIPT'
             f.write(struct.pack('<I', len(rows)))             # element count
-            f.write(struct.pack('<I', len(complete_data)))    # data size (header + size + encrypted)
+            f.write(struct.pack('<I', len(complete_data)))    # data size
             f.write(complete_data)
 
         print("item_proto created successfully!")
@@ -632,29 +639,36 @@ class Mysql2Proto:
             print("Warning: LZO not available, using uncompressed data")
             compressed = bytes(data)
 
-        # Encrypt with TEA
-        # Prepend 4-byte size header before encryption
-        size_header = struct.pack('<I', len(compressed))
-        to_encrypt = size_header + compressed
+        # Build data to encrypt: MCOZ fourcc + size + compressed data
+        # After decryption, first 4 bytes MUST be 'MCOZ' (client checks this)
+        to_encrypt = struct.pack('<I', FOURCC_MCOZ) + struct.pack('<I', len(compressed)) + compressed
 
-        encrypted = TEA.encrypt(to_encrypt, MOB_PROTO_KEY)
-        print(f"{len(compressed)} --Encrypt--> {len(encrypted)} bytes")
+        # Pad to 8-byte boundary for TEA encryption
+        if len(to_encrypt) % 8:
+            padded_size = (len(to_encrypt) // 8 + 1) * 8
+        else:
+            padded_size = len(to_encrypt)
+        to_encrypt_padded = to_encrypt + b'\x00' * (padded_size - len(to_encrypt))
 
-        # Build MCOZ header (LZO compression header)
+        # Encrypt padded data
+        encrypted = TEA.encrypt(to_encrypt_padded, MOB_PROTO_KEY)
+        print(f"{len(data)} --Compress--> {len(compressed)} --Encrypt--> {len(encrypted)} bytes")
+
+        # Build MCOZ header (NOT encrypted) - this goes BEFORE encrypted data
         mcoz_header = bytearray(16)
         struct.pack_into('<I', mcoz_header, 0, FOURCC_MCOZ)          # fourcc 'MCOZ'
-        struct.pack_into('<I', mcoz_header, 4, len(encrypted))       # dwEncryptSize
+        struct.pack_into('<I', mcoz_header, 4, padded_size)          # dwEncryptSize (padded size)
         struct.pack_into('<I', mcoz_header, 8, len(compressed))      # dwCompressedSize
         struct.pack_into('<I', mcoz_header, 12, len(data))           # dwRealSize
 
-        # Build complete data: MCOZ header + size + encrypted data
-        complete_data = bytes(mcoz_header) + struct.pack('<I', len(encrypted)) + encrypted
+        # Build complete data: MCOZ header + encrypted data
+        complete_data = bytes(mcoz_header) + encrypted
 
         # Write to file
         with open('mob_proto', 'wb') as f:
             f.write(struct.pack('<I', FOURCC_MMPT))           # fourcc 'MMPT'
             f.write(struct.pack('<I', len(rows)))             # element count
-            f.write(struct.pack('<I', len(complete_data)))    # data size (header + size + encrypted)
+            f.write(struct.pack('<I', len(complete_data)))    # data size
             f.write(complete_data)
 
         print("mob_proto created successfully!")
