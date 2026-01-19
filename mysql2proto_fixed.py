@@ -33,6 +33,7 @@ ITEM_PROTO_KEY = [173217, 72619434, 408587239, 27973291]
 # FOURCC magic numbers
 FOURCC_MIPT = 0x5450494D  # 'MIPT' for item_proto
 FOURCC_MMPT = 0x54504D4D  # 'MMPT' for mob_proto
+FOURCC_MCOZ = 0x5A4F434D  # 'MCOZ' for LZO compression header
 
 class TEA:
     """TEA (Tiny Encryption Algorithm) cipher"""
@@ -555,12 +556,22 @@ class Mysql2Proto:
         encrypted = TEA.encrypt(to_encrypt, ITEM_PROTO_KEY)
         print(f"{len(compressed)} --Encrypt--> {len(encrypted)} bytes")
 
+        # Build MCOZ header (LZO compression header)
+        mcoz_header = bytearray(16)
+        struct.pack_into('<I', mcoz_header, 0, FOURCC_MCOZ)          # fourcc 'MCOZ'
+        struct.pack_into('<I', mcoz_header, 4, len(encrypted))       # dwEncryptSize
+        struct.pack_into('<I', mcoz_header, 8, len(compressed))      # dwCompressedSize
+        struct.pack_into('<I', mcoz_header, 12, len(data))           # dwRealSize
+
+        # Build complete data: MCOZ header + size + encrypted data
+        complete_data = bytes(mcoz_header) + struct.pack('<I', len(encrypted)) + encrypted
+
         # Write to file
         with open('item_proto', 'wb') as f:
             f.write(struct.pack('<I', FOURCC_MIPT))           # fourcc 'MIPT'
             f.write(struct.pack('<I', len(rows)))             # element count
-            f.write(struct.pack('<I', len(encrypted)))        # data size
-            f.write(encrypted)
+            f.write(struct.pack('<I', len(complete_data)))    # data size (header + size + encrypted)
+            f.write(complete_data)
 
         print("item_proto created successfully!")
         print(f"File size: {os.path.getsize('item_proto')} bytes")
@@ -629,12 +640,22 @@ class Mysql2Proto:
         encrypted = TEA.encrypt(to_encrypt, MOB_PROTO_KEY)
         print(f"{len(compressed)} --Encrypt--> {len(encrypted)} bytes")
 
+        # Build MCOZ header (LZO compression header)
+        mcoz_header = bytearray(16)
+        struct.pack_into('<I', mcoz_header, 0, FOURCC_MCOZ)          # fourcc 'MCOZ'
+        struct.pack_into('<I', mcoz_header, 4, len(encrypted))       # dwEncryptSize
+        struct.pack_into('<I', mcoz_header, 8, len(compressed))      # dwCompressedSize
+        struct.pack_into('<I', mcoz_header, 12, len(data))           # dwRealSize
+
+        # Build complete data: MCOZ header + size + encrypted data
+        complete_data = bytes(mcoz_header) + struct.pack('<I', len(encrypted)) + encrypted
+
         # Write to file
         with open('mob_proto', 'wb') as f:
             f.write(struct.pack('<I', FOURCC_MMPT))           # fourcc 'MMPT'
             f.write(struct.pack('<I', len(rows)))             # element count
-            f.write(struct.pack('<I', len(encrypted)))        # data size
-            f.write(encrypted)
+            f.write(struct.pack('<I', len(complete_data)))    # data size (header + size + encrypted)
+            f.write(complete_data)
 
         print("mob_proto created successfully!")
         print(f"File size: {os.path.getsize('mob_proto')} bytes")
