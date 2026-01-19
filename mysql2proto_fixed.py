@@ -107,7 +107,7 @@ def to_bytes(value, encoding='utf-8'):
 class ItemTableR156:
     """TItemTable_r156 structure - 156 bytes - EXACT match from ItemData.h"""
 
-    # struct SItemTable_r156 {
+    # struct SItemTable_r156 {  (PACKED - no padding)
     #   DWORD dwVnum;                   // 4
     #   DWORD dwVnumRange;              // 4
     #   char szName[25];                // 25
@@ -122,8 +122,8 @@ class ItemTableR156:
     #   DWORD dwImmuneFlag;             // 4
     #   DWORD dwIBuyItemPrice;          // 4
     #   DWORD dwISellItemPrice;         // 4
-    #   TItemLimit aLimits[2];          // 2 * 8 = 16  (BYTE+long with padding)
-    #   TItemApply aApplies[3];         // 3 * 8 = 24  (BYTE+long with padding)
+    #   TItemLimit aLimits[2];          // 2 * 5 = 10  (BYTE+long, PACKED)
+    #   TItemApply aApplies[3];         // 3 * 5 = 15  (BYTE+long, PACKED)
     #   long alValues[6];               // 6 * 4 = 24
     #   long alSockets[3];              // 3 * 4 = 12
     #   DWORD dwRefinedVnum;            // 4
@@ -131,8 +131,7 @@ class ItemTableR156:
     #   BYTE bAlterToMagicItemPct;      // 1
     #   BYTE bSpecular;                 // 1
     #   BYTE bGainSocketPct;            // 1
-    #   // padding to align                  3
-    # } = 156 bytes total
+    # } = 156 bytes total (PACKED)
 
     SIZE = 156
 
@@ -184,21 +183,21 @@ class ItemTableR156:
                         row[6] or 0)   # shop_buy_price
         offset += 8
 
-        # aLimits[2] - TItemLimit { BYTE bType; long lValue; } with padding
-        # Each TItemLimit is 8 bytes (BYTE + 3 padding + long)
+        # aLimits[2] - TItemLimit { BYTE bType; long lValue; } WITHOUT padding (packed)
+        # Each TItemLimit is 5 bytes (BYTE + long, no padding)
         for i in range(2):
             limit_type = row[19 + i*2] or 0
             limit_value = row[20 + i*2] or 0
-            struct.pack_into('<Bxxxl', data, offset, limit_type, limit_value)
-            offset += 8
+            struct.pack_into('<Bl', data, offset, limit_type, limit_value)
+            offset += 5
 
-        # aApplies[3] - TItemApply { BYTE bType; long lValue; } with padding
-        # Each TItemApply is 8 bytes (BYTE + 3 padding + long)
+        # aApplies[3] - TItemApply { BYTE bType; long lValue; } WITHOUT padding (packed)
+        # Each TItemApply is 5 bytes (BYTE + long, no padding)
         for i in range(3):
             apply_type = row[23 + i*2] or 0
             apply_value = row[24 + i*2] or 0
-            struct.pack_into('<Bxxxl', data, offset, apply_type, apply_value)
-            offset += 8
+            struct.pack_into('<Bl', data, offset, apply_type, apply_value)
+            offset += 5
 
         # alValues[6] (6 longs)
         for i in range(6):
@@ -224,10 +223,9 @@ class ItemTableR156:
                         row[17] or 0)  # socket_pct
         offset += 3
 
-        # Padding to 156 bytes (should be 3 bytes)
-        # Already handled by bytearray initialization
+        # No padding needed - struct is packed to exactly 156 bytes
 
-        assert offset + 3 == ItemTableR156.SIZE, f"Size mismatch: {offset} + 3 != {ItemTableR156.SIZE}"
+        assert offset == ItemTableR156.SIZE, f"Size mismatch: {offset} != {ItemTableR156.SIZE}"
 
         return bytes(data)
 
