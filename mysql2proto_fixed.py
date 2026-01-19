@@ -31,7 +31,8 @@ MOB_PROTO_KEY = [4813894, 18955, 552631, 6822045]
 ITEM_PROTO_KEY = [173217, 72619434, 408587239, 27973291]
 
 # FOURCC magic numbers
-FOURCC_MIPT = 0x5450494D  # 'MIPT' for item_proto
+FOURCC_MIPT = 0x5450494D  # 'MIPT' for item_proto (standard)
+FOURCC_MIPX = 0x5850494D  # 'MIPX' for item_proto (extended with version/stride)
 FOURCC_MMPT = 0x54504D4D  # 'MMPT' for mob_proto
 FOURCC_MCOZ = 0x5A4F434D  # 'MCOZ' for LZO compression header
 
@@ -573,9 +574,11 @@ class Mysql2Proto:
         # Build complete data: MCOZ header + encrypted data
         complete_data = bytes(mcoz_header) + encrypted
 
-        # Write to file
+        # Write to file with MIPX format (extended format with version and stride)
         with open('item_proto', 'wb') as f:
-            f.write(struct.pack('<I', FOURCC_MIPT))           # fourcc 'MIPT'
+            f.write(struct.pack('<I', FOURCC_MIPX))           # fourcc 'MIPX' (extended format)
+            f.write(struct.pack('<I', 1))                     # version = 1
+            f.write(struct.pack('<I', ItemTableR156.SIZE))    # stride = 156 bytes
             f.write(struct.pack('<I', len(rows)))             # element count
             f.write(struct.pack('<I', len(complete_data)))    # data size
             f.write(complete_data)
