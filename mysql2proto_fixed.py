@@ -24,15 +24,47 @@ try:
     HAS_LZO = True
     LZO_LIBRARY = 'python-lzo'
 except ImportError:
+    lzo = None
     try:
-        import lzallright as lzo
+        import lzallright
         HAS_LZO = True
         LZO_LIBRARY = 'lzallright'
         print("Using lzallright for LZO compression (python-lzo alternative)")
     except ImportError:
+        lzallright = None
         print("Warning: python-lzo/lzallright not installed. Trying without compression...")
         HAS_LZO = False
         LZO_LIBRARY = None
+
+
+def lzo_compress(data):
+    """Compress data using available LZO library"""
+    if not HAS_LZO:
+        return bytes(data)
+
+    if LZO_LIBRARY == 'python-lzo':
+        # python-lzo API: lzo.compress(data, level)
+        return lzo.compress(bytes(data), 1)
+    elif LZO_LIBRARY == 'lzallright':
+        # lzallright API - try different method names
+        try:
+            # Try direct compress
+            if hasattr(lzallright, 'compress'):
+                return lzallright.compress(bytes(data))
+            # Try lzo1x_1_compress
+            elif hasattr(lzallright, 'lzo1x_1_compress'):
+                return lzallright.lzo1x_1_compress(bytes(data))
+            # Try LZO class
+            elif hasattr(lzallright, 'LZO'):
+                return lzallright.LZO().compress(bytes(data))
+            else:
+                print(f"Warning: lzallright API unknown. Available: {dir(lzallright)}")
+                return bytes(data)
+        except Exception as e:
+            print(f"Warning: lzallright compression failed: {e}")
+            return bytes(data)
+    else:
+        return bytes(data)
 
 # TEA Encryption Keys
 MOB_PROTO_KEY = [4813894, 18955, 552631, 6822045]
@@ -546,15 +578,14 @@ class Mysql2Proto:
         print(f"lzo.real_alloc  {hex(id(data))}({len(data)})")
 
         # Compress with LZO
-        if HAS_LZO:
-            try:
-                compressed = lzo.compress(bytes(data), 1)  # level 1 = lzo1x_1
-                print(f"{len(data)} --Compress--> {len(compressed)} bytes")
-            except Exception as e:
-                print(f"Warning: LZO compression failed: {e}, using uncompressed data")
-                compressed = bytes(data)
+        compressed = lzo_compress(data)
+        if len(compressed) < len(data):
+            print(f"{len(data)} --Compress--> {len(compressed)} bytes")
         else:
-            print("Warning: LZO not available, using uncompressed data")
+            if HAS_LZO:
+                print(f"Warning: Compression didn't reduce size, using uncompressed ({len(data)} bytes)")
+            else:
+                print(f"Warning: LZO not available, using uncompressed data ({len(data)} bytes)")
             compressed = bytes(data)
 
         # Build data to encrypt: MCOZ fourcc + size + compressed data
@@ -639,15 +670,14 @@ class Mysql2Proto:
         print(f"lzo.real_alloc  {hex(id(data))}({len(data)})")
 
         # Compress with LZO
-        if HAS_LZO:
-            try:
-                compressed = lzo.compress(bytes(data), 1)  # level 1 = lzo1x_1
-                print(f"{len(data)} --Compress--> {len(compressed)} bytes")
-            except Exception as e:
-                print(f"Warning: LZO compression failed: {e}, using uncompressed data")
-                compressed = bytes(data)
+        compressed = lzo_compress(data)
+        if len(compressed) < len(data):
+            print(f"{len(data)} --Compress--> {len(compressed)} bytes")
         else:
-            print("Warning: LZO not available, using uncompressed data")
+            if HAS_LZO:
+                print(f"Warning: Compression didn't reduce size, using uncompressed ({len(data)} bytes)")
+            else:
+                print(f"Warning: LZO not available, using uncompressed data ({len(data)} bytes)")
             compressed = bytes(data)
 
         # Build data to encrypt: MCOZ fourcc + size + compressed data
