@@ -550,9 +550,9 @@ class Mysql2Proto:
                 print(f"Warning: LZO not available, using uncompressed data ({len(data)} bytes)")
             compressed = bytes(data)
 
-        # Build data to encrypt: MCOZ fourcc + size + compressed data
+        # Build data to encrypt: MCOZ fourcc + compressed data
         # After decryption, first 4 bytes MUST be 'MCOZ' (client checks this)
-        to_encrypt = struct.pack('<I', FOURCC_MCOZ) + struct.pack('<I', len(compressed)) + compressed
+        to_encrypt = struct.pack('<I', FOURCC_MCOZ) + compressed
 
         # Pad to 8-byte boundary for TEA encryption
         if len(to_encrypt) % 8:
@@ -565,14 +565,22 @@ class Mysql2Proto:
         encrypted = TEA.encrypt(to_encrypt_padded, ITEM_PROTO_KEY)
         print(f"{len(data)} --Compress--> {len(compressed)} --Encrypt--> {len(encrypted)} bytes")
 
+        # Build THeader (UNENCRYPTED) - this goes BEFORE encrypted data
+        theader = bytearray(16)
+        struct.pack_into('<I', theader, 0, FOURCC_MCOZ)           # fourcc 'MCOZ'
+        struct.pack_into('<I', theader, 4, len(encrypted))        # dwEncryptSize
+        struct.pack_into('<I', theader, 8, len(compressed))       # dwCompressedSize
+        struct.pack_into('<I', theader, 12, len(data))            # dwRealSize
+
         # Write to file with MIPX format (extended format with version and stride)
-        # Format: MIPX header + encrypted data (MCOZ is inside encrypted data)
+        # Format: MIPX header + THeader (unencrypted) + encrypted data
         with open('item_proto', 'wb') as f:
             f.write(struct.pack('<I', FOURCC_MIPX))           # fourcc 'MIPX' (extended format)
             f.write(struct.pack('<I', 1))                     # version = 1
             f.write(struct.pack('<I', ItemTableR156.SIZE))    # stride = 156 bytes
             f.write(struct.pack('<I', len(rows)))             # element count
-            f.write(struct.pack('<I', len(encrypted)))        # data size (encrypted size)
+            f.write(struct.pack('<I', len(theader) + len(encrypted)))  # data size
+            f.write(theader)                                  # THeader (unencrypted)
             f.write(encrypted)                                 # encrypted data
 
         print("item_proto created successfully!")
@@ -633,9 +641,9 @@ class Mysql2Proto:
                 print(f"Warning: LZO not available, using uncompressed data ({len(data)} bytes)")
             compressed = bytes(data)
 
-        # Build data to encrypt: MCOZ fourcc + size + compressed data
+        # Build data to encrypt: MCOZ fourcc + compressed data
         # After decryption, first 4 bytes MUST be 'MCOZ' (client checks this)
-        to_encrypt = struct.pack('<I', FOURCC_MCOZ) + struct.pack('<I', len(compressed)) + compressed
+        to_encrypt = struct.pack('<I', FOURCC_MCOZ) + compressed
 
         # Pad to 8-byte boundary for TEA encryption
         if len(to_encrypt) % 8:
@@ -648,13 +656,21 @@ class Mysql2Proto:
         encrypted = TEA.encrypt(to_encrypt_padded, MOB_PROTO_KEY)
         print(f"{len(data)} --Compress--> {len(compressed)} --Encrypt--> {len(encrypted)} bytes")
 
+        # Build THeader (UNENCRYPTED) - this goes BEFORE encrypted data
+        theader = bytearray(16)
+        struct.pack_into('<I', theader, 0, FOURCC_MCOZ)           # fourcc 'MCOZ'
+        struct.pack_into('<I', theader, 4, len(encrypted))        # dwEncryptSize
+        struct.pack_into('<I', theader, 8, len(compressed))       # dwCompressedSize
+        struct.pack_into('<I', theader, 12, len(data))            # dwRealSize
+
         # Write to file with MMPT format
-        # Format: MMPT header + encrypted data (MCOZ is inside encrypted data)
+        # Format: MMPT header + THeader (unencrypted) + encrypted data
         with open('mob_proto', 'wb') as f:
             f.write(struct.pack('<I', FOURCC_MMPT))           # fourcc 'MMPT'
             f.write(struct.pack('<I', len(rows)))             # element count
-            f.write(struct.pack('<I', len(encrypted)))        # data size (encrypted size)
-            f.write(encrypted)                                 # encrypted data
+            f.write(struct.pack('<I', len(theader) + len(encrypted)))  # data size
+            f.write(theader)                                  # THeader (unencrypted)
+            f.write(encrypted)                                # encrypted data
 
         print("mob_proto created successfully!")
         print(f"File size: {os.path.getsize('mob_proto')} bytes")
