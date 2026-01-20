@@ -23,15 +23,18 @@ try:
     import lzo
     HAS_LZO = True
     LZO_LIBRARY = 'python-lzo'
+    lzo_compressor = None
 except ImportError:
     lzo = None
     try:
-        import lzallright
+        from lzallright import LZOCompressor
         HAS_LZO = True
         LZO_LIBRARY = 'lzallright'
+        lzo_compressor = LZOCompressor()
         print("Using lzallright for LZO compression (python-lzo alternative)")
     except ImportError:
-        lzallright = None
+        LZOCompressor = None
+        lzo_compressor = None
         print("Warning: python-lzo/lzallright not installed. Trying without compression...")
         HAS_LZO = False
         LZO_LIBRARY = None
@@ -42,28 +45,17 @@ def lzo_compress(data):
     if not HAS_LZO:
         return bytes(data)
 
-    if LZO_LIBRARY == 'python-lzo':
-        # python-lzo API: lzo.compress(data, level)
-        return lzo.compress(bytes(data), 1)
-    elif LZO_LIBRARY == 'lzallright':
-        # lzallright API - try different method names
-        try:
-            # Try direct compress
-            if hasattr(lzallright, 'compress'):
-                return lzallright.compress(bytes(data))
-            # Try lzo1x_1_compress
-            elif hasattr(lzallright, 'lzo1x_1_compress'):
-                return lzallright.lzo1x_1_compress(bytes(data))
-            # Try LZO class
-            elif hasattr(lzallright, 'LZO'):
-                return lzallright.LZO().compress(bytes(data))
-            else:
-                print(f"Warning: lzallright API unknown. Available: {dir(lzallright)}")
-                return bytes(data)
-        except Exception as e:
-            print(f"Warning: lzallright compression failed: {e}")
+    try:
+        if LZO_LIBRARY == 'python-lzo':
+            # python-lzo API: lzo.compress(data, level)
+            return lzo.compress(bytes(data), 1)
+        elif LZO_LIBRARY == 'lzallright':
+            # lzallright API: LZOCompressor().compress(data)
+            return lzo_compressor.compress(bytes(data))
+        else:
             return bytes(data)
-    else:
+    except Exception as e:
+        print(f"Warning: LZO compression failed: {e}")
         return bytes(data)
 
 # TEA Encryption Keys
