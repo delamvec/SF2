@@ -116,8 +116,13 @@ def rename_icons(mapping, icons_folder='icons', backup=True):
 
             # Backup original
             if backup:
-                backup_file = backup_path / old_icon.name
-                shutil.copy2(old_icon, backup_file)
+                try:
+                    backup_file = backup_path / old_icon.name
+                    # Use str() to avoid Path issues on Windows
+                    shutil.copy2(str(old_icon), str(backup_file))
+                except Exception as e:
+                    print(f"  ! Warning: Backup failed for {old_icon.name}: {e}")
+                    log_file.write(f"[BACKUP FAILED] {old_vnum}: {e}\n")
 
             # Rename
             try:
