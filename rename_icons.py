@@ -76,7 +76,7 @@ def find_icon_files(icons_folder, vnum):
     return found
 
 
-def rename_icons(mapping, icons_folder='icons', backup=True):
+def rename_icons(mapping, icons_folder='icons'):
     """Rename icon files based on vnum mapping"""
     icons_path = Path(icons_folder)
 
@@ -84,12 +84,6 @@ def rename_icons(mapping, icons_folder='icons', backup=True):
         print(f"\nError: Folder '{icons_folder}' not found!")
         print("Please create 'icons' folder and put your icon files there.")
         return
-
-    # Create backup folder if requested
-    if backup:
-        backup_path = icons_path / 'backup'
-        backup_path.mkdir(exist_ok=True)
-        print(f"\nBackup folder created: {backup_path}")
 
     # Open log file
     log_file = open('rename_log.txt', 'w', encoding='utf-8')
@@ -113,16 +107,6 @@ def rename_icons(mapping, icons_folder='icons', backup=True):
         for old_icon in icon_files:
             extension = old_icon.suffix
             new_icon = icons_path / f"{new_vnum}{extension}"
-
-            # Backup original
-            if backup:
-                try:
-                    backup_file = backup_path / old_icon.name
-                    # Use str() to avoid Path issues on Windows
-                    shutil.copy2(str(old_icon), str(backup_file))
-                except Exception as e:
-                    print(f"  ! Warning: Backup failed for {old_icon.name}: {e}")
-                    log_file.write(f"[BACKUP FAILED] {old_vnum}: {e}\n")
 
             # Rename
             try:
