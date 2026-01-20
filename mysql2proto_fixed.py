@@ -280,17 +280,17 @@ class ItemTableR156:
 
 
 class MobTableR255:
-    """TMobTable_r255 structure - 312 bytes - EXACT match from PythonNonPlayer.h"""
-
-    # Structure based on Mysql2Proto.cpp BuildMobTable() implementation
-    # Total size: 312 bytes
-    SIZE = 312
+    """TMobTable_r255 structure - 255 bytes - PACKED (no padding)"""
+    SIZE = 255
+    CHARACTER_NAME_MAX_LEN = 24
+    MOB_ENCHANTS_MAX_NUM = 6
+    MOB_RESISTS_MAX_NUM = 11
+    MOB_SKILL_MAX_NUM = 5
 
     @staticmethod
     def pack_from_db_row(row):
-        """Pack MobTable from MySQL row - EXACT binary format"""
+        """Pack MobTable from MySQL row - PACKED binary format (no alignment padding)"""
         data = bytearray(MobTableR255.SIZE)
-
         offset = 0
 
         # dwVnum (DWORD - 4 bytes)
@@ -298,26 +298,41 @@ class MobTableR255:
         offset += 4
 
         # szName (char[25])
-        name = to_bytes(row[1] or '')[:24]
+        name = to_bytes(row[1] or '')[:MobTableR255.CHARACTER_NAME_MAX_LEN]
         data[offset:offset+25] = name.ljust(25, b'\x00')
         offset += 25
 
         # szLocaleName (char[25])
-        locale_name = to_bytes(row[2] or '')[:24]
+        locale_name = to_bytes(row[2] or '')[:MobTableR255.CHARACTER_NAME_MAX_LEN]
         data[offset:offset+25] = locale_name.ljust(25, b'\x00')
         offset += 25
 
-        # bRank, bType, bBattleType, bLevel, bSize (5 BYTEs)
+        # bType, bRank, bBattleType, bLevel, bSize (5 BYTEs)
         struct.pack_into('<BBBBB', data, offset,
-                        to_int(row[4]),   # rank
                         to_int(row[3]),   # type
+                        to_int(row[4]),   # rank
                         to_int(row[5]),   # battle_type
                         to_int(row[6]),   # level
                         to_int(row[7]))   # size
         offset += 5
 
-        # Padding to align (3 bytes)
-        offset += 3
+        # dwGoldMin, dwGoldMax, dwExp, dwMaxHP (4 DWORDs)
+        struct.pack_into('<IIII', data, offset,
+                        to_int(row[26]),  # gold_min
+                        to_int(row[27]),  # gold_max
+                        to_int(row[25]),  # exp
+                        to_int(row[22]))  # max_hp
+        offset += 16
+
+        # bRegenCycle, bRegenPercent (2 BYTEs)
+        struct.pack_into('<BB', data, offset,
+                        to_int(row[23]),  # regen_cycle
+                        to_int(row[24]))  # regen_percent
+        offset += 2
+
+        # wDef (WORD)
+        struct.pack_into('<H', data, offset, to_int(row[28]))
+        offset += 2
 
         # dwAIFlag, dwRaceFlag, dwImmuneFlag (3 DWORDs)
         struct.pack_into('<III', data, offset,
@@ -325,22 +340,6 @@ class MobTableR255:
                         to_int(row[9]),   # setRaceFlag
                         to_int(row[10]))  # setImmuneFlag
         offset += 12
-
-        # bEmpire (BYTE)
-        struct.pack_into('<B', data, offset, to_int(row[12]))
-        offset += 1
-
-        # Padding (3 bytes)
-        offset += 3
-
-        # szFolder (char[64])
-        folder = to_bytes(row[15] or '')[:63]
-        data[offset:offset+64] = folder.ljust(64, b'\x00')
-        offset += 64
-
-        # bOnClickType (BYTE)
-        struct.pack_into('<B', data, offset, to_int(row[11]))
-        offset += 1
 
         # bStr, bDex, bCon, bInt (4 BYTEs)
         struct.pack_into('<BBBB', data, offset,
@@ -350,41 +349,11 @@ class MobTableR255:
                         to_int(row[19]))  # iq
         offset += 4
 
-        # Padding (3 bytes)
-        offset += 3
-
         # dwDamageRange[2] (2 DWORDs)
         struct.pack_into('<II', data, offset,
                         to_int(row[20]),  # damage_min
                         to_int(row[21]))  # damage_max
         offset += 8
-
-        # dwMaxHP (DWORD)
-        struct.pack_into('<I', data, offset, to_int(row[22]))
-        offset += 4
-
-        # bRegenCycle, bRegenPercent (2 BYTEs)
-        struct.pack_into('<BB', data, offset,
-                        to_int(row[23]),  # regen_cycle
-                        to_int(row[24]))  # regen_percent
-        offset += 2
-
-        # Padding (2 bytes)
-        offset += 2
-
-        # dwExp (DWORD)
-        struct.pack_into('<I', data, offset, to_int(row[25]))
-        offset += 4
-
-        # dwGoldMin, dwGoldMax (2 DWORDs)
-        struct.pack_into('<II', data, offset,
-                        to_int(row[26]),  # gold_min
-                        to_int(row[27]))  # gold_max
-        offset += 8
-
-        # wDef (WORD)
-        struct.pack_into('<H', data, offset, to_int(row[28]))
-        offset += 2
 
         # sAttackSpeed, sMovingSpeed (2 shorts)
         struct.pack_into('<hh', data, offset,
@@ -396,9 +365,6 @@ class MobTableR255:
         struct.pack_into('<B', data, offset, to_int(row[31]))
         offset += 1
 
-        # Padding (1 byte)
-        offset += 1
-
         # wAggressiveSight (WORD)
         struct.pack_into('<H', data, offset, to_int(row[32]))
         offset += 2
@@ -406,21 +372,6 @@ class MobTableR255:
         # wAttackRange (WORD)
         struct.pack_into('<H', data, offset, to_int(row[33]))
         offset += 2
-
-        # Padding (2 bytes)
-        offset += 2
-
-        # dwDropItemVnum (DWORD)
-        struct.pack_into('<I', data, offset, to_int(row[13]))
-        offset += 4
-
-        # dwResurrectionVnum (DWORD)
-        struct.pack_into('<I', data, offset, to_int(row[14]))
-        offset += 4
-
-        # dwPolymorphItemVnum (DWORD)
-        struct.pack_into('<I', data, offset, to_int(row[34]))
-        offset += 4
 
         # cEnchants[6] (6 signed chars)
         struct.pack_into('<bbbbbb', data, offset,
@@ -431,9 +382,6 @@ class MobTableR255:
                         to_int(row[39]),  # enchant_critical
                         to_int(row[40]))  # enchant_penetrate
         offset += 6
-
-        # Padding (2 bytes)
-        offset += 2
 
         # cResists[11] (11 signed chars)
         struct.pack_into('<bbbbbbbbbbb', data, offset,
@@ -450,8 +398,32 @@ class MobTableR255:
                         to_int(row[51]))  # resist_poison
         offset += 11
 
-        # Padding (1 byte)
+        # dwResurrectionVnum (DWORD)
+        struct.pack_into('<I', data, offset, to_int(row[14]))
+        offset += 4
+
+        # dwDropItemVnum (DWORD)
+        struct.pack_into('<I', data, offset, to_int(row[13]))
+        offset += 4
+
+        # bMountCapacity (BYTE) - this field exists in DB but not in query
+        # According to SQL schema, this is mount_capacity field
+        # We'll set it to 0 since it's not in our query
+        struct.pack_into('<B', data, offset, 0)
         offset += 1
+
+        # bOnClickType (BYTE)
+        struct.pack_into('<B', data, offset, to_int(row[11]))
+        offset += 1
+
+        # bEmpire (BYTE)
+        struct.pack_into('<B', data, offset, to_int(row[12]))
+        offset += 1
+
+        # szFolder (char[65])
+        folder = to_bytes(row[15] or '')[:64]
+        data[offset:offset+65] = folder.ljust(65, b'\x00')
+        offset += 65
 
         # fDamMultiply (float - 4 bytes)
         struct.pack_into('<f', data, offset, float(row[52] or 0.0))
@@ -469,13 +441,16 @@ class MobTableR255:
         struct.pack_into('<I', data, offset, to_int(row[55]))
         offset += 4
 
-        # Skills[5] - each skill is { DWORD dwVnum; BYTE bLevel; } with padding
-        # Each skill structure is 8 bytes (DWORD + BYTE + 3 padding)
-        for i in range(5):
+        # dwPolymorphItemVnum (DWORD)
+        struct.pack_into('<I', data, offset, to_int(row[34]))
+        offset += 4
+
+        # Skills[5] - each TMobSkillLevel is PACKED: { DWORD dwVnum; BYTE bLevel; } = 5 bytes
+        for i in range(MobTableR255.MOB_SKILL_MAX_NUM):
             skill_vnum = to_int(row[56 + i*2])
             skill_level = to_int(row[57 + i*2])
-            struct.pack_into('<IBxxx', data, offset, skill_vnum, skill_level)
-            offset += 8
+            struct.pack_into('<IB', data, offset, skill_vnum, skill_level)
+            offset += 5
 
         # Special Points (5 BYTEs)
         struct.pack_into('<BBBBB', data, offset,
@@ -486,12 +461,7 @@ class MobTableR255:
                         to_int(row[70]))  # sp_revive
         offset += 5
 
-        # Padding to 312 bytes - add remaining bytes to reach SIZE
-        # Structure has reserved/unused fields at the end
-        remaining = MobTableR255.SIZE - offset
-        # Padding already handled by bytearray initialization (zeros)
-
-        assert offset <= MobTableR255.SIZE, f"Size overflow: {offset} > {MobTableR255.SIZE}"
+        assert offset == MobTableR255.SIZE, f"Size mismatch: {offset} != {MobTableR255.SIZE}"
 
         return bytes(data)
 
