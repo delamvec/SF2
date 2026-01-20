@@ -37,23 +37,15 @@ def determine_item_category(type_val, subtype_val):
     except:
         return 'ETC'
 
-    # Based on Metin2 item types:
-    # Type 0 = Sword (one-handed) - WEAPON
-    # Type 1 = Dagger - WEAPON
-    # Type 2 = Bow - WEAPON
-    # Type 3 = Bell - WEAPON
-    # Type 4 = Fan - WEAPON
-    # Type 5 = Two-handed sword - WEAPON
-    # But in this CSV, type=1 means all weapons, type=2 means armor
+    # Based on actual CSV data:
+    # Type 1 = All weapons (jednoruční meč, dýka, luk, zvon, vějíř, dvouruční meč)
+    # Type 2 = All armor (brnění, oblek, pancíř, šaty)
+    # Type 16+ = Other items (consumables, etc.)
 
-    # Weapons: type 0-5 OR type 1 (in this specific CSV)
-    if type_num in [0, 1, 2, 3, 4, 5]:
+    if type_num == 1:
         return 'WEAPON'
 
-    # Armor: type 2 (body armor)
-    # In some versions, armor types are different
-    # Let's check both old and new formats
-    if type_num in [2]:
+    if type_num == 2:
         return 'ARMOR'
 
     # Everything else is ETC
