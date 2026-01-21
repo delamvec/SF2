@@ -165,6 +165,10 @@ def generate_mob_drop_item(mobs, output_file='mob_drop_item.txt'):
 
     print(f"\nGenerating {output_file}...")
 
+    # Track used group names to avoid duplicates
+    used_names = set()
+    skipped_count = 0
+
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write("// Mob Drop Item file generated from mob_names\n")
         f.write("// Format: Group name { Mob vnum, Type drop }\n\n")
@@ -172,6 +176,14 @@ def generate_mob_drop_item(mobs, output_file='mob_drop_item.txt'):
         for mob in mobs:
             vnum = mob['vnum']
             sanitized_name = mob['sanitized_name']
+
+            # Skip if this sanitized name was already used
+            if sanitized_name in used_names:
+                skipped_count += 1
+                continue
+
+            # Mark this name as used
+            used_names.add(sanitized_name)
 
             # Write Group block
             f.write(f"Group\t{sanitized_name}\n")
@@ -181,7 +193,9 @@ def generate_mob_drop_item(mobs, output_file='mob_drop_item.txt'):
             f.write("\n")
             f.write("}\n\n")
 
-    print(f"  Generated {len(mobs)} mob drop entries")
+    print(f"  Generated {len(used_names)} unique mob drop groups")
+    if skipped_count > 0:
+        print(f"  Skipped {skipped_count} duplicate names")
 
 
 def main():
