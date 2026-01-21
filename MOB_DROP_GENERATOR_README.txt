@@ -131,6 +131,23 @@ A: Zkontroluj že mob_names.txt obsahuje všechny moby
 Q: Znaky stále obsahují diakritiku
 A: Zkontroluj že používáš nejnovější verzi scriptu
 
+Q: Písmena zmizí (např. "Divok_pes" místo "Divoky_pes")
+A: Script automaticky detekuje správné kódování souboru (UTF-8, CP1250, atd.)
+   Pokud problém přetrvává, zkus uložit mob_names.txt jako UTF-8
+
+
+KÓDOVÁNÍ SOUBORŮ:
+-----------------
+Script automaticky detekuje správné kódování mob_names.txt:
+- Zkouší UTF-8, CP1250, Windows-1250, ISO-8859-2
+- Ověřuje že dekódovaný text nedělá nesmysly
+- Používá první kódování které dává správné výsledky
+
+Podporovaná kódování:
+- UTF-8 (doporučeno pro nové soubory)
+- Windows-1250 / CP1250 (staré české soubory)
+- ISO-8859-2 (méně časté)
+
 
 PŘÍKLAD mob_names.txt:
 ----------------------
