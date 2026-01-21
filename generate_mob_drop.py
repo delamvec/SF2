@@ -17,27 +17,41 @@ Output:
 """
 
 import re
-import unicodedata
 from pathlib import Path
 
 
 def remove_diacritics(text):
     """
     Remove diacritics (accents, háčky, čárky) from text.
-    Uses Unicode normalization to properly handle all Czech characters.
+    Simple character-by-character replacement.
 
     Examples:
         'Silný Vlk' -> 'Silny Vlk'
         'Černý Medvěd' -> 'Cerny Medved'
         'Šedý vlk' -> 'Sedy vlk'
     """
-    # Normalize to NFD (decomposed form: base char + combining diacritics)
-    nfd_form = unicodedata.normalize('NFD', text)
+    # Complete Czech character mapping
+    replacements = {
+        'á': 'a', 'Á': 'A',
+        'č': 'c', 'Č': 'C',
+        'ď': 'd', 'Ď': 'D',
+        'é': 'e', 'É': 'E',
+        'ě': 'e', 'Ě': 'E',
+        'í': 'i', 'Í': 'I',
+        'ň': 'n', 'Ň': 'N',
+        'ó': 'o', 'Ó': 'O',
+        'ř': 'r', 'Ř': 'R',
+        'š': 's', 'Š': 'S',
+        'ť': 't', 'Ť': 'T',
+        'ú': 'u', 'Ú': 'U',
+        'ů': 'u', 'Ů': 'U',
+        'ý': 'y', 'Ý': 'Y',
+        'ž': 'z', 'Ž': 'Z',
+    }
 
-    # Filter out combining diacritical marks (category 'Mn')
-    # Keep only characters that are NOT combining marks
-    result = ''.join(char for char in nfd_form
-                     if unicodedata.category(char) != 'Mn')
+    result = text
+    for czech, ascii in replacements.items():
+        result = result.replace(czech, ascii)
 
     return result
 
