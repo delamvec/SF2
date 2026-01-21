@@ -56,21 +56,31 @@ def remove_diacritics(text):
     return result
 
 
-def sanitize_group_name(name):
+def sanitize_group_name(name, debug=False):
     """
     Sanitize mob name for Group usage:
     - Remove diacritics (č→c, ř→r, á→a, etc.)
     - Replace spaces with underscores
     - Remove any other special characters
     """
+    if debug:
+        print(f"    [DEBUG] Original: {repr(name)}")
+        print(f"    [DEBUG] Bytes: {name.encode('utf-8', errors='replace').hex()}")
+
     # Remove diacritics
     name = remove_diacritics(name)
+    if debug:
+        print(f"    [DEBUG] After remove_diacritics: {repr(name)}")
 
     # Replace spaces with underscores
     name = name.replace(' ', '_')
+    if debug:
+        print(f"    [DEBUG] After replace spaces: {repr(name)}")
 
     # Remove any other special characters (keep only alphanumeric and underscore)
     name = re.sub(r'[^a-zA-Z0-9_]', '', name)
+    if debug:
+        print(f"    [DEBUG] After regex cleanup: {repr(name)}")
 
     return name
 
@@ -86,15 +96,28 @@ def load_mob_names(filename):
         return mobs
 
     # Try different encodings (Czech files are often in cp1250/windows-1250)
-    encodings = ['cp1250', 'windows-1250', 'iso-8859-2', 'utf-8']
+    # But we need to verify the encoding is correct by checking for common Czech characters
+    encodings = ['utf-8', 'cp1250', 'windows-1250', 'iso-8859-2']
     file_content = None
+    used_encoding = None
 
     for encoding in encodings:
         try:
             with open(filename, 'r', encoding=encoding) as f:
-                file_content = f.readlines()
-                print(f"  Successfully loaded with encoding: {encoding}")
-                break
+                test_content = f.read()
+
+                # Check if this encoding produces reasonable text
+                # Look for common issues: garbled multi-byte sequences
+                # In correct encoding, we should have normal Czech letters, not weird combinations
+                garbled_indicators = ['Ă˝', 'Ă­', 'Ä›', 'Ĺ™', 'ÄŤ', 'Ĺ¯']
+                is_garbled = any(indicator in test_content for indicator in garbled_indicators)
+
+                if not is_garbled:
+                    # This encoding looks good, use it
+                    file_content = test_content.splitlines()
+                    used_encoding = encoding
+                    print(f"  Successfully loaded with encoding: {encoding}")
+                    break
         except (UnicodeDecodeError, LookupError):
             continue
 
@@ -102,6 +125,7 @@ def load_mob_names(filename):
         print(f"  Warning: Could not detect encoding, using utf-8 with errors='replace'")
         with open(filename, 'r', encoding='utf-8', errors='replace') as f:
             file_content = f.readlines()
+            used_encoding = 'utf-8'
 
     for line in file_content:
         line = line.strip()
@@ -117,6 +141,11 @@ def load_mob_names(filename):
             try:
                 vnum = int(parts[0])
                 name = parts[1].strip()
+
+                # Debug: print first few mobs to verify encoding
+                if len(mobs) < 3:
+                    sanitized = sanitize_group_name(name)
+                    print(f"  Debug: '{name}' -> '{sanitized}'")
 
                 mobs.append({
                     'vnum': vnum,
