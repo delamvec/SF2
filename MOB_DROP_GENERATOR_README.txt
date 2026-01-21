@@ -16,6 +16,7 @@ CO SCRIPT DĚLÁ:
 2. Pro každého moba vytvoří Group blok v mob_drop_item.txt
 3. Odstraní české znaky (diakritiku) z názvů
 4. Nahradí mezery podtržítkem (_)
+5. Odstraní duplicitní názvy (použije jen první vnum)
 
 
 FORMÁT VÝSTUPU:
@@ -102,11 +103,27 @@ Kamenný Golem       → Kamenny_Golem
 Ďábelský Rytíř      → Dabelsky_Rytir
 
 
+DUPLICITNÍ NÁZVY:
+-----------------
+Pokud více mobů má stejný název po odstranění diakritiky, script vytvoří
+jen jeden Group s prvním vnumem který najde.
+
+Příklad - pokud máš v mob_names.txt:
+  102     Vlk
+  103     Vlk
+  108     Vlk
+
+Script vytvoří jen:
+  Group Vlk { Mob 102 }
+
+A vypíše: "Skipped 2 duplicate names"
+
 DŮLEŽITÉ:
 ---------
 - Mezery se nahradí podtržítkem (_)
 - České znaky se odstraní (čárky, háčky)
 - Ostatní speciální znaky se odstraní
+- Duplicitní názvy se přeskočí (použije se jen první vnum)
 - Výsledek je použitelný v konfiguračních souborech serveru
 
 
