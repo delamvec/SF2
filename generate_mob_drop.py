@@ -85,30 +85,47 @@ def load_mob_names(filename):
         print(f"Error: {filename} not found!")
         return mobs
 
-    with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
-        for line in f:
-            line = line.strip()
+    # Try different encodings (Czech files are often in cp1250/windows-1250)
+    encodings = ['cp1250', 'windows-1250', 'iso-8859-2', 'utf-8']
+    file_content = None
 
-            # Skip empty lines and comments
-            if not line or line.startswith('//') or line.startswith('#'):
+    for encoding in encodings:
+        try:
+            with open(filename, 'r', encoding=encoding) as f:
+                file_content = f.readlines()
+                print(f"  Successfully loaded with encoding: {encoding}")
+                break
+        except (UnicodeDecodeError, LookupError):
+            continue
+
+    if file_content is None:
+        print(f"  Warning: Could not detect encoding, using utf-8 with errors='replace'")
+        with open(filename, 'r', encoding='utf-8', errors='replace') as f:
+            file_content = f.readlines()
+
+    for line in file_content:
+        line = line.strip()
+
+        # Skip empty lines and comments
+        if not line or line.startswith('//') or line.startswith('#') or line.startswith('VNUM'):
+            continue
+
+        # Parse line (format: vnum<TAB>name or vnum<SPACE>name)
+        parts = re.split(r'\s+', line, maxsplit=1)
+
+        if len(parts) >= 2:
+            try:
+                vnum = int(parts[0])
+                name = parts[1].strip()
+
+                mobs.append({
+                    'vnum': vnum,
+                    'name': name,
+                    'sanitized_name': sanitize_group_name(name)
+                })
+            except ValueError:
+                # Skip lines that don't start with a number
                 continue
-
-            # Parse line (format: vnum<TAB>name or vnum<SPACE>name)
-            parts = re.split(r'\s+', line, maxsplit=1)
-
-            if len(parts) >= 2:
-                try:
-                    vnum = int(parts[0])
-                    name = parts[1].strip()
-
-                    mobs.append({
-                        'vnum': vnum,
-                        'name': name,
-                        'sanitized_name': sanitize_group_name(name)
-                    })
-                except ValueError:
-                    # Skip lines that don't start with a number
-                    continue
 
     print(f"  Loaded {len(mobs)} mobs")
     return mobs
