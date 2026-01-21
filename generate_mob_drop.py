@@ -17,34 +17,28 @@ Output:
 """
 
 import re
+import unicodedata
 from pathlib import Path
 
 
-# Czech character transliteration map
-CZECH_CHARS = {
-    'á': 'a', 'Á': 'A',
-    'č': 'c', 'Č': 'C',
-    'ď': 'd', 'Ď': 'D',
-    'é': 'e', 'É': 'E',
-    'ě': 'e', 'Ě': 'E',
-    'í': 'i', 'Í': 'I',
-    'ň': 'n', 'Ň': 'N',
-    'ó': 'o', 'Ó': 'O',
-    'ř': 'r', 'Ř': 'R',
-    'š': 's', 'Š': 'S',
-    'ť': 't', 'Ť': 'T',
-    'ú': 'u', 'Ú': 'U',
-    'ů': 'u', 'Ů': 'U',
-    'ý': 'y', 'Ý': 'Y',
-    'ž': 'z', 'Ž': 'Z',
-}
-
-
 def remove_diacritics(text):
-    """Remove Czech diacritics from text"""
-    result = text
-    for czech_char, ascii_char in CZECH_CHARS.items():
-        result = result.replace(czech_char, ascii_char)
+    """
+    Remove diacritics (accents, háčky, čárky) from text.
+    Uses Unicode normalization to properly handle all Czech characters.
+
+    Examples:
+        'Silný Vlk' -> 'Silny Vlk'
+        'Černý Medvěd' -> 'Cerny Medved'
+        'Šedý vlk' -> 'Sedy vlk'
+    """
+    # Normalize to NFD (decomposed form: base char + combining diacritics)
+    nfd_form = unicodedata.normalize('NFD', text)
+
+    # Filter out combining diacritical marks (category 'Mn')
+    # Keep only characters that are NOT combining marks
+    result = ''.join(char for char in nfd_form
+                     if unicodedata.category(char) != 'Mn')
+
     return result
 
 
