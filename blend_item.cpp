@@ -16,13 +16,13 @@ struct BLEND_ITEM_INFO
 	int		apply_duration[MAX_BLEND_ITEM_VALUE];
 };
 
-// Energy Crystal (51002) bonus structure
+// Energy Crystal (51002) bonus structure - supports 5 values and 5 durations
 struct ECS_BONUS_INFO
 {
 	int		bonus_index;
 	int		apply_type;
-	int		apply_value;
-	int		apply_duration;
+	int		apply_value[MAX_BLEND_ITEM_VALUE];
+	int		apply_duration[MAX_BLEND_ITEM_VALUE];
 };
 
 typedef std::vector<BLEND_ITEM_INFO*>	T_BLEND_ITEM_INFO;
@@ -146,15 +146,18 @@ bool	Blend_Item_load(char *file)
 		{
 			if (is_ecs_section)
 			{
-				v = strtok(NULL, delim);
-
-				if (NULL==v)
+				for (int i=0; i<MAX_BLEND_ITEM_VALUE; ++i)
 				{
-					fclose(fp);
-					return false;
-				}
+					v = strtok(NULL, delim);
 
-				str_to_number(ecs_bonus_info->apply_value, v);
+					if (NULL==v)
+					{
+						fclose(fp);
+						return false;
+					}
+
+					str_to_number(ecs_bonus_info->apply_value[i], v);
+				}
 			}
 			else
 			{
@@ -176,15 +179,18 @@ bool	Blend_Item_load(char *file)
 		{
 			if (is_ecs_section)
 			{
-				v = strtok(NULL, delim);
-
-				if (NULL==v)
+				for (int i=0; i<MAX_BLEND_ITEM_VALUE; ++i)
 				{
-					fclose(fp);
-					return false;
-				}
+					v = strtok(NULL, delim);
 
-				str_to_number(ecs_bonus_info->apply_duration, v);
+					if (NULL==v)
+					{
+						fclose(fp);
+						return false;
+					}
+
+					str_to_number(ecs_bonus_info->apply_duration[i], v);
+				}
 			}
 			else
 			{
@@ -207,9 +213,14 @@ bool	Blend_Item_load(char *file)
 			if (is_ecs_section)
 			{
 				s_ecs_bonus_info.emplace_back(ecs_bonus_info);
-				sys_log(0, "ECS Bonus loaded: index %d, type %d, value %d, duration %d",
+				sys_log(0, "ECS Bonus loaded: index %d, type %d, values [%d,%d,%d,%d,%d], durations [%d,%d,%d,%d,%d]",
 					ecs_bonus_info->bonus_index, ecs_bonus_info->apply_type,
-					ecs_bonus_info->apply_value, ecs_bonus_info->apply_duration);
+					ecs_bonus_info->apply_value[0], ecs_bonus_info->apply_value[1],
+					ecs_bonus_info->apply_value[2], ecs_bonus_info->apply_value[3],
+					ecs_bonus_info->apply_value[4],
+					ecs_bonus_info->apply_duration[0], ecs_bonus_info->apply_duration[1],
+					ecs_bonus_info->apply_duration[2], ecs_bonus_info->apply_duration[3],
+					ecs_bonus_info->apply_duration[4]);
 			}
 			else
 			{
@@ -230,7 +241,7 @@ static int FN_random_index()
 {
 	int	percent = number(1,100);
 
-	if (percent<=10)			// level 1 :10%
+	if (percent<=10)			// level 1 : 10%
 		return 0;
 	else if (percent<=30)		// level 2 : 20%
 		return 1;
@@ -267,13 +278,16 @@ bool	Blend_Item_set_value(LPITEM item)
 			return false;
 		}
 
-		sys_log(0, "ECS: Selected bonus index %d, type %d, value %d, duration %d",
-			selected_bonus->bonus_index, selected_bonus->apply_type,
-			selected_bonus->apply_value, selected_bonus->apply_duration);
+		int apply_type = selected_bonus->apply_type;
+		int apply_value = selected_bonus->apply_value[FN_random_index()];
+		int apply_duration = selected_bonus->apply_duration[FN_random_index()];
 
-		item->SetSocket(0, selected_bonus->apply_type);
-		item->SetSocket(1, selected_bonus->apply_value);
-		item->SetSocket(2, selected_bonus->apply_duration);
+		sys_log(0, "ECS: Selected bonus index %d, type %d, value %d, duration %d",
+			selected_bonus->bonus_index, apply_type, apply_value, apply_duration);
+
+		item->SetSocket(0, apply_type);
+		item->SetSocket(1, apply_value);
+		item->SetSocket(2, apply_duration);
 		return true;
 	}
 
