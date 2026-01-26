@@ -1,0 +1,135 @@
+#Kriticky zasah
+section
+	item_vnum	50821
+	apply_type	CRITICAL_PCT
+	apply_value	8	10	12	15	20
+	apply_duration	60	120	180	300	600
+end
+
+#Prubojnost
+section
+	item_vnum	50822
+	apply_type	PENETRATE_PCT
+	apply_value	8	10	12	15	20
+	apply_duration	60	120	180	300	600
+end
+
+#Rychlost utoku
+section
+	item_vnum	50823
+	apply_type	ATTACK_SPEED
+	apply_value	2	3	4	5	8
+	apply_duration	60	120	180	300	600
+end
+
+#Odolnost magii
+section
+	item_vnum	50824
+	apply_type	RESIST_MAGIC
+	apply_value	8	10	12	15	20
+	apply_duration	60	120	180	300	600
+end
+
+#Bonus utok
+section
+	item_vnum	50825
+	apply_type	ATT_BONUS
+	apply_value	30	50	70	90	120
+	apply_duration	60	120	180	300	600
+end
+
+#Bonus obrana
+section
+	item_vnum	50826
+	apply_type	DEF_BONUS
+	apply_value	40	70	100	150	200
+	apply_duration	60	120	180	300	600
+end
+
+# =============================================================================
+# ENERGY CRYSTAL BONUSES (Item 51002)
+# 10 bonus templates - each selected randomly on crystal use
+# Duration is always 7200 seconds (2 hours)
+# Modify apply_type and apply_value according to your needs
+# =============================================================================
+
+#Energy Crystal Bonus 1 - TEMPLATE (modify apply_type and apply_value)
+energy_crystal_bonus
+	bonus_index	0
+	apply_type	ATT_BONUS
+	apply_value	50
+	apply_duration	7200
+end
+
+#Energy Crystal Bonus 2 - TEMPLATE
+energy_crystal_bonus
+	bonus_index	1
+	apply_type	DEF_BONUS
+	apply_value	50
+	apply_duration	7200
+end
+
+#Energy Crystal Bonus 3 - TEMPLATE
+energy_crystal_bonus
+	bonus_index	2
+	apply_type	CRITICAL_PCT
+	apply_value	10
+	apply_duration	7200
+end
+
+#Energy Crystal Bonus 4 - TEMPLATE
+energy_crystal_bonus
+	bonus_index	3
+	apply_type	PENETRATE_PCT
+	apply_value	10
+	apply_duration	7200
+end
+
+#Energy Crystal Bonus 5 - TEMPLATE
+energy_crystal_bonus
+	bonus_index	4
+	apply_type	ATTACK_SPEED
+	apply_value	5
+	apply_duration	7200
+end
+
+#Energy Crystal Bonus 6 - TEMPLATE
+energy_crystal_bonus
+	bonus_index	5
+	apply_type	RESIST_MAGIC
+	apply_value	10
+	apply_duration	7200
+end
+
+#Energy Crystal Bonus 7 - TEMPLATE
+energy_crystal_bonus
+	bonus_index	6
+	apply_type	MAX_HP
+	apply_value	500
+	apply_duration	7200
+end
+
+#Energy Crystal Bonus 8 - TEMPLATE
+energy_crystal_bonus
+	bonus_index	7
+	apply_type	MAX_SP
+	apply_value	300
+	apply_duration	7200
+end
+
+#Energy Crystal Bonus 9 - TEMPLATE
+energy_crystal_bonus
+	bonus_index	8
+	apply_type	HP_REGEN
+	apply_value	20
+	apply_duration	7200
+end
+
+#Energy Crystal Bonus 10 - TEMPLATE
+energy_crystal_bonus
+	bonus_index	9
+	apply_type	SP_REGEN
+	apply_value	20
+	apply_duration	7200
+end
+
