@@ -10,10 +10,15 @@
 
 #define	MAX_BLEND_ITEM_VALUE		5
 
+// Energy Crystal System - item vnum
+#define ECS_ITEM_VNUM				51002
+
 bool	Blend_Item_init();
 bool	Blend_Item_load(char *file);
 bool	Blend_Item_set_value(LPITEM item);
 bool	Blend_Item_find(DWORD item_vnum);
 
+// Energy Crystal System - get random bonus (for use when item is clicked)
+bool	ECS_get_random_bonus(int* apply_type, int* apply_value, int* apply_duration);
+
 #endif	/* _blend_item_h_ */
-//martysama0134's 623a0779c74cb7565145d45548376308

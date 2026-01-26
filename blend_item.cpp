@@ -265,33 +265,39 @@ static ECS_BONUS_INFO* FN_ECS_select_random_bonus()
 	return s_ecs_bonus_info[random_index];
 }
 
+// Public function to get random ECS bonus values (called from char_item.cpp when item is used)
+bool	ECS_get_random_bonus(int* apply_type, int* apply_value, int* apply_duration)
+{
+	ECS_BONUS_INFO* selected_bonus = FN_ECS_select_random_bonus();
+
+	if (selected_bonus == NULL)
+	{
+		sys_err("ECS: No bonus available for energy crystal");
+		return false;
+	}
+
+	*apply_type = selected_bonus->apply_type;
+	*apply_value = selected_bonus->apply_value[FN_random_index()];
+	*apply_duration = selected_bonus->apply_duration[FN_random_index()];
+
+	sys_log(0, "ECS: Generated bonus - type %d, value %d, duration %d",
+		*apply_type, *apply_value, *apply_duration);
+
+	return true;
+}
+
 bool	Blend_Item_set_value(LPITEM item)
 {
-	// Handle Energy Crystal (51002) - select random bonus from pool
-	if (item->GetVnum() == 51002)
+	// Energy Crystal (51002) - DO NOT set socket values
+	// Values are generated when item is USED, not when created
+	// This allows the item to stack properly
+	if (item->GetVnum() == ECS_ITEM_VNUM)
 	{
-		ECS_BONUS_INFO* selected_bonus = FN_ECS_select_random_bonus();
-
-		if (selected_bonus == NULL)
-		{
-			sys_err("ECS: No bonus available for item 51002");
-			return false;
-		}
-
-		int apply_type = selected_bonus->apply_type;
-		int apply_value = selected_bonus->apply_value[FN_random_index()];
-		int apply_duration = selected_bonus->apply_duration[FN_random_index()];
-
-		sys_log(0, "ECS: Selected bonus index %d, type %d, value %d, duration %d",
-			selected_bonus->bonus_index, apply_type, apply_value, apply_duration);
-
-		item->SetSocket(0, apply_type);
-		item->SetSocket(1, apply_value);
-		item->SetSocket(2, apply_duration);
+		sys_log(0, "ECS: Item 51002 created without preset values (stackable)");
 		return true;
 	}
 
-	// Handle regular blend items
+	// Handle regular blend items - set socket values on creation
 	BLEND_ITEM_INFO	*blend_info;
 	T_BLEND_ITEM_INFO::iterator	iter;
 
@@ -322,7 +328,7 @@ bool	Blend_Item_set_value(LPITEM item)
 bool	Blend_Item_find(DWORD item_vnum)
 {
 	// Energy Crystal is always a valid blend item
-	if (item_vnum == 51002)
+	if (item_vnum == ECS_ITEM_VNUM)
 		return true;
 
 	BLEND_ITEM_INFO	*blend_info;
