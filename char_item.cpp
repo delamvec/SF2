@@ -5221,14 +5221,16 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 			sys_log(0,"ITEM_BLEND!!");
 			if (Blend_Item_find(item->GetVnum()))
 			{
-				int		affect_type		= AFFECT_BLEND;
-				int		apply_type;
-				int		apply_value;
-				int		apply_duration;
-
-				// Energy Crystal (51002) - generate random bonus on use
+				// Energy Crystal (51002) - special handling with unique affect type
 				if (item->GetVnum() == ECS_ITEM_VNUM)
 				{
+					// Check if ANY Energy Crystal bonus is already active
+					if (FindAffect(AFFECT_ENERGY_CRYSTAL))
+					{
+						ChatPacket(CHAT_TYPE_INFO, "Bonus z krystalu je jiz aktivni.");
+						break;
+					}
+
 					int ecs_apply_type, ecs_apply_value, ecs_apply_duration;
 
 					if (!ECS_get_random_bonus(&ecs_apply_type, &ecs_apply_value, &ecs_apply_duration))
@@ -5237,32 +5239,37 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 						return false;
 					}
 
-					apply_type = aApplyInfo[ecs_apply_type].bPointType;
-					apply_value = ecs_apply_value;
-					apply_duration = ecs_apply_duration;
-				}
-				else
-				{
-					// Regular blend items - read from sockets
-					apply_type = aApplyInfo[item->GetSocket(0)].bPointType;
-					apply_value = item->GetSocket(1);
-					apply_duration = item->GetSocket(2);
-				}
+					int apply_type = aApplyInfo[ecs_apply_type].bPointType;
 
-				if (FindAffect(affect_type, apply_type))
-				{
-					ChatPacket(CHAT_TYPE_INFO, LC_TEXT("�̹� ȿ���� �ɷ� �ֽ��ϴ�."));
+					sys_log(0, "ECS: Applying bonus - affect_type %d, apply_type %d, value %d, duration %d",
+						AFFECT_ENERGY_CRYSTAL, apply_type, ecs_apply_value, ecs_apply_duration);
+
+					AddAffect(AFFECT_ENERGY_CRYSTAL, apply_type, ecs_apply_value, 0, ecs_apply_duration, 0, false);
+					item->SetCount(item->GetCount() - 1);
 				}
 				else
 				{
-					if (FindAffect(AFFECT_EXP_BONUS_EURO_FREE, POINT_RESIST_MAGIC))
+					// Regular blend items - original behavior
+					int		affect_type		= AFFECT_BLEND;
+					int		apply_type		= aApplyInfo[item->GetSocket(0)].bPointType;
+					int		apply_value		= item->GetSocket(1);
+					int		apply_duration	= item->GetSocket(2);
+
+					if (FindAffect(affect_type, apply_type))
 					{
 						ChatPacket(CHAT_TYPE_INFO, LC_TEXT("�̹� ȿ���� �ɷ� �ֽ��ϴ�."));
 					}
 					else
 					{
-						AddAffect(affect_type, apply_type, apply_value, 0, apply_duration, 0, false);
-						item->SetCount(item->GetCount() - 1);
+						if (FindAffect(AFFECT_EXP_BONUS_EURO_FREE, POINT_RESIST_MAGIC))
+						{
+							ChatPacket(CHAT_TYPE_INFO, LC_TEXT("�̹� ȿ���� �ɷ� �ֽ��ϴ�."));
+						}
+						else
+						{
+							AddAffect(affect_type, apply_type, apply_value, 0, apply_duration, 0, false);
+							item->SetCount(item->GetCount() - 1);
+						}
 					}
 				}
 			}
