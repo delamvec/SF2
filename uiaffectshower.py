@@ -447,6 +447,15 @@ class AffectShower(ui.Window):
 		self.SetPosition(10, 10)
 		self.Show()
 
+		# DEBUG: Check for key collisions
+		print "DEBUG INIT: POINT_MALL_ATTBONUS = %s (key: %s)" % (player.POINT_MALL_ATTBONUS, self.MALL_DESC_IDX_START + player.POINT_MALL_ATTBONUS)
+		print "DEBUG INIT: POINT_MALL_DEFBONUS = %s (key: %s)" % (player.POINT_MALL_DEFBONUS, self.MALL_DESC_IDX_START + player.POINT_MALL_DEFBONUS)
+		attbonus_key = self.MALL_DESC_IDX_START + player.POINT_MALL_ATTBONUS
+		if attbonus_key in self.AFFECT_DATA_DICT:
+			print "DEBUG INIT: ATTBONUS key %s EXISTS in dict, value: %s" % (attbonus_key, self.AFFECT_DATA_DICT[attbonus_key])
+		else:
+			print "DEBUG INIT: ATTBONUS key %s NOT FOUND in dict!" % attbonus_key
+
 	def ClearAllAffects(self):
 		self.horseImage=None
 		self.lovePointImage=None
@@ -464,19 +473,24 @@ class AffectShower(ui.Window):
 	def BINARY_NEW_AddAffect(self, type, pointIdx, value, duration):
 
 		print "BINARY_NEW_AddAffect", type, pointIdx, value, duration
+		print "DEBUG: POINT_MALL_ATTBONUS=%s, POINT_MALL_DEFBONUS=%s" % (player.POINT_MALL_ATTBONUS, player.POINT_MALL_DEFBONUS)
 
 		if type < 500:
 			return
 
 		if type == chr.NEW_AFFECT_MALL:
 			affect = self.MALL_DESC_IDX_START + pointIdx
+			print "DEBUG: MALL affect calculated: %s (1000 + %s)" % (affect, pointIdx)
 		else:
 			affect = type
 
 		if self.affectImageDict.has_key(affect):
+			print "DEBUG: affect %s already exists, skipping" % affect
 			return
 
 		if not self.AFFECT_DATA_DICT.has_key(affect):
+			print "DEBUG: affect %s NOT FOUND in AFFECT_DATA_DICT!" % affect
+			print "DEBUG: Available MALL keys: %s" % [k for k in self.AFFECT_DATA_DICT.keys() if k >= 1000]
 			return
 
 		if affect == chr.NEW_AFFECT_NO_DEATH_PENALTY or\
