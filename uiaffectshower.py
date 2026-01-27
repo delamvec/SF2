@@ -495,7 +495,8 @@ class AffectShower(ui.Window):
 			value = 1 + float(value) / 100.0
 
 		if affect != chr.NEW_AFFECT_AUTO_SP_RECOVERY and affect != chr.NEW_AFFECT_AUTO_HP_RECOVERY:
-			description = description(float(value))
+			if callable(description):
+				description = description(float(value))
 
 		try:
 			print "Add affect %s" % affect
