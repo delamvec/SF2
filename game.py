@@ -31,8 +31,10 @@ import uiPhaseCurtain
 import uiMapNameShower
 import uiAffectShower
 import uiPlayerGauge
-import uiEnergyGauge
 import uiCharacter
+
+# Energy Crystal affect type (must match server's AFFECT_ENERGY_CRYSTAL)
+AFFECT_ENERGY_CRYSTAL = 536
 import uiTarget
 
 # PRIVATE_SHOP_PRICE_LIST
@@ -81,7 +83,6 @@ class GameWindow(ui.ScriptWindow):
 		self.mapNameShower = None
 		self.affectShower = None
 		self.playerGauge = None
-		self.energyGauge = None
 
 		self.stream=stream
 		self.interface = interfaceModule.Interface()
@@ -106,9 +107,6 @@ class GameWindow(ui.ScriptWindow):
 
 		self.playerGauge = uiPlayerGauge.PlayerGauge(self)
 		self.playerGauge.Hide()
-
-		self.energyGauge = uiEnergyGauge.EnergyGauge()
-		self.energyGauge.Hide()
 
 		self.itemDropQuestionDialog = None
 
@@ -280,10 +278,6 @@ class GameWindow(ui.ScriptWindow):
 		self.playerGauge = None
 		self.mapNameShower = None
 		self.affectShower = None
-
-		if self.energyGauge:
-			self.energyGauge.Destroy()
-			self.energyGauge = None
 
 		if self.console:
 			self.console.BindGameClass(0)
@@ -740,17 +734,17 @@ class GameWindow(ui.ScriptWindow):
 			self.interface.DragonSoulActivate(type - chr.NEW_AFFECT_DRAGON_SOUL_DECK1)
 		elif chr.NEW_AFFECT_DRAGON_SOUL_QUALIFIED == type:
 			self.BINARY_DragonSoulGiveQuilification()
-		elif uiEnergyGauge.AFFECT_ENERGY_CRYSTAL == type:
-			if self.energyGauge:
-				self.energyGauge.SetEnergyAffect(duration)
+		elif AFFECT_ENERGY_CRYSTAL == type:
+			if self.interface:
+				self.interface.SetEnergyAffect(duration)
 
 	def BINARY_NEW_RemoveAffect(self, type, pointIdx):
 		self.affectShower.BINARY_NEW_RemoveAffect(type, pointIdx)
 		if chr.NEW_AFFECT_DRAGON_SOUL_DECK1 == type or chr.NEW_AFFECT_DRAGON_SOUL_DECK2 == type:
 			self.interface.DragonSoulDeactivate()
-		elif uiEnergyGauge.AFFECT_ENERGY_CRYSTAL == type:
-			if self.energyGauge:
-				self.energyGauge.RemoveEnergyAffect()
+		elif AFFECT_ENERGY_CRYSTAL == type:
+			if self.interface:
+				self.interface.RemoveEnergyAffect()
 	# END_OF_UNKNOWN_UPDATE
 
 	def BINARY_NEW_CurrentChannel(self, channelID):
