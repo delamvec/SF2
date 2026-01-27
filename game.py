@@ -736,7 +736,7 @@ class GameWindow(ui.ScriptWindow):
 			self.BINARY_DragonSoulGiveQuilification()
 		elif AFFECT_ENERGY_CRYSTAL == type:
 			if self.interface:
-				self.interface.SetEnergyAffect(duration)
+				self.interface.SetEnergyAffect(pointIdx, value, duration)
 
 	def BINARY_NEW_RemoveAffect(self, type, pointIdx):
 		self.affectShower.BINARY_NEW_RemoveAffect(type, pointIdx)

@@ -97,6 +97,33 @@ class EnergyBar(ui.ScriptWindow):
 	# AFFECT_ENERGY_CRYSTAL type (must match server)
 	AFFECT_ENERGY_CRYSTAL = 536
 
+	# Bonus type names (POINT_TYPE -> Czech name)
+	BONUS_NAMES = {
+		1: "Max HP",
+		2: "Max SP",
+		3: "Vitalita",
+		4: "Inteligence",
+		5: "Sila",
+		6: "Obratnost",
+		7: "Rychlost utoku",
+		8: "Rychlost pohybu",
+		9: "Rychlost kouzel",
+		10: "Regenerace HP",
+		11: "Regenerace SP",
+		15: "Kriticky zasah",
+		16: "Prorazeni",
+		17: "Utok na lidi",
+		27: "Blokovani",
+		28: "Uhybani",
+		37: "Odolnost magii",
+		53: "Utocna sila",
+		54: "Obrana",
+		63: "Utok na prisery",
+		71: "Posk. schopnosti",
+		72: "Posk. prumy utok",
+		121: "Posk. schopnosti",
+	}
+
 	class TextToolTip(ui.Window):
 		def __init__(self):
 			ui.Window.__init__(self, "TOP_MOST")
@@ -128,6 +155,8 @@ class EnergyBar(ui.ScriptWindow):
 		self.energyAffectEndTime = 0
 		self.energyAffectDuration = 0
 		self.isEnergyAffectActive = False
+		self.energyBonusType = 0
+		self.energyBonusValue = 0
 
 	def __del__(self):
 		#print "---------------------------------------------------------------------------- DELETE TASKBAR"
@@ -157,12 +186,18 @@ class EnergyBar(ui.ScriptWindow):
 		self.energyGaugeToolTip = 0
 		self.tooltipEnergy = 0
 
+	def GetBonusName(self, pointType):
+		"""Get Czech name for bonus type"""
+		return self.BONUS_NAMES.get(pointType, "Bonus %d" % pointType)
+
 	# Energy Crystal affect methods
-	def SetEnergyAffect(self, duration):
+	def SetEnergyAffect(self, pointIdx, value, duration):
 		"""Called when AFFECT_ENERGY_CRYSTAL is added"""
 		self.isEnergyAffectActive = True
 		self.energyAffectDuration = duration
 		self.energyAffectEndTime = app.GetGlobalTimeStamp() + duration
+		self.energyBonusType = pointIdx
+		self.energyBonusValue = value
 		self.RefreshStatus()
 
 	def RemoveEnergyAffect(self):
@@ -170,6 +205,8 @@ class EnergyBar(ui.ScriptWindow):
 		self.isEnergyAffectActive = False
 		self.energyAffectEndTime = 0
 		self.energyAffectDuration = 0
+		self.energyBonusType = 0
+		self.energyBonusValue = 0
 		self.RefreshStatus()
 
 	## Gauge
@@ -199,10 +236,15 @@ class EnergyBar(ui.ScriptWindow):
 		else:
 			self.energyFull.Show()
 
-		# Show remaining time in minutes
+		# Show remaining time with bonus info
 		minutes = leftTime / 60
 		seconds = leftTime % 60
-		self.tooltipEnergy.SetText("Energie %d:%02d" % (minutes, seconds))
+
+		if self.isEnergyAffectActive and self.energyBonusType > 0:
+			bonusName = self.GetBonusName(self.energyBonusType)
+			self.tooltipEnergy.SetText("%s +%d (%d:%02d)" % (bonusName, self.energyBonusValue, minutes, seconds))
+		else:
+			self.tooltipEnergy.SetText("Energie %d:%02d" % (minutes, seconds))
 
 	def OnUpdate(self):
 		if True == self.energyGaugeToolTip.IsIn():

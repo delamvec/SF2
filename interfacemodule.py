@@ -612,9 +612,9 @@ class Interface(object):
 			self.wndDragonSoul.RefreshStatus()
 
 	# Energy Crystal affect methods
-	def SetEnergyAffect(self, duration):
+	def SetEnergyAffect(self, pointIdx, value, duration):
 		if self.wndEnergyBar:
-			self.wndEnergyBar.SetEnergyAffect(duration)
+			self.wndEnergyBar.SetEnergyAffect(pointIdx, value, duration)
 
 	def RemoveEnergyAffect(self):
 		if self.wndEnergyBar:
