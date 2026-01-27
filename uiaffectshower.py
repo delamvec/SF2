@@ -423,6 +423,16 @@ class AffectShower(ui.Window):
 
 			MALL_DESC_IDX_START+player.POINT_PC_BANG_EXP_BONUS : (localeInfo.TOOLTIP_MALL_EXPBONUS_P_STATIC, "d:/ymir work/ui/skill/common/affect/EXP_Bonus_p_on.sub",),
 			MALL_DESC_IDX_START+player.POINT_PC_BANG_DROP_BONUS: (localeInfo.TOOLTIP_MALL_ITEMBONUS_P_STATIC, "d:/ymir work/ui/skill/common/affect/Item_Bonus_p_on.sub",),
+
+			# DEW / ROSA AFFECTS (500-506)
+			# TODO: Update icon paths and descriptions as needed
+			500 : (lambda x: "Rosa 500", "d:/ymir work/ui/skill/common/affect/gold_premium.sub"),
+			501 : (lambda x: "Rosa 501", "d:/ymir work/ui/skill/common/affect/gold_premium.sub"),
+			502 : (lambda x: "Rosa 502", "d:/ymir work/ui/skill/common/affect/gold_premium.sub"),
+			503 : (lambda x: "Rosa 503", "d:/ymir work/ui/skill/common/affect/gold_premium.sub"),
+			504 : (lambda x: "Rosa 504", "d:/ymir work/ui/skill/common/affect/gold_premium.sub"),
+			505 : (lambda x: "Rosa 505", "d:/ymir work/ui/skill/common/affect/gold_premium.sub"),
+			506 : (lambda x: "Rosa 506", "d:/ymir work/ui/skill/common/affect/gold_premium.sub"),
 	}
 	if app.ENABLE_DRAGON_SOUL_SYSTEM:
 		AFFECT_DATA_DICT[chr.NEW_AFFECT_DRAGON_SOUL_DECK1] = (localeInfo.TOOLTIP_DRAGON_SOUL_DECK1, "d:/ymir work/ui/dragonsoul/buff_ds_sky1.tga")
