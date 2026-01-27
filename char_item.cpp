@@ -1641,7 +1641,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 			case LIMIT_LEVEL:
 				if (GetLevel() < limitValue)
 				{
-					ChatPacket(CHAT_TYPE_INFO, LC_TEXT("�������� ���� ���Ѻ��� ������ �����ϴ�."));
+					ChatPacket(CHAT_TYPE_INFO, "Tvuj level je prilis nizky pro pouziti tohoto predmetu.");
 					return false;
 				}
 				break;
@@ -5257,13 +5257,13 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 
 					if (FindAffect(affect_type, apply_type))
 					{
-						ChatPacket(CHAT_TYPE_INFO, LC_TEXT("�̹� ȿ���� �ɷ� �ֽ��ϴ�."));
+						ChatPacket(CHAT_TYPE_INFO, "Tento bonus je jiz aktivni.");
 					}
 					else
 					{
 						if (FindAffect(AFFECT_EXP_BONUS_EURO_FREE, POINT_RESIST_MAGIC))
 						{
-							ChatPacket(CHAT_TYPE_INFO, LC_TEXT("�̹� ȿ���� �ɷ� �ֽ��ϴ�."));
+							ChatPacket(CHAT_TYPE_INFO, "Tento bonus je jiz aktivni.");
 						}
 						else
 						{
